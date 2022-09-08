@@ -8,7 +8,7 @@
 import Foundation
 import Algorithms
 
-public struct KnightMovePath {
+public struct KnightMovePath: Equatable {
     
     public typealias PathPerDice = [Node]
     
@@ -30,7 +30,6 @@ public protocol KnightPathSuggestService {
 
 public struct KnightPathSuggestServiceImple: KnightPathSuggestService {
     
-    private let attackerPaths: [Node: Node.NextNodes] = Node.attackLinkedPath
     private let defenderPaths: [Node: Node.NextNodes] = Node.defenceLinkedPath
     
     public init() { }
@@ -74,18 +73,22 @@ extension KnightPathSuggestServiceImple {
         with serializedDices: [BinaryDice]
     ) -> KnightMovePath {
         
-        let asOneStepPath: (BinaryDice) -> KnightMovePath.PathPerDice = { dice in
+        typealias PathPerDice = KnightMovePath.PathPerDice
+        let asSerialPaths: ([PathPerDice], BinaryDice) -> [PathPerDice] = { acc, dice in
+            let startNode = acc.last?.last ?? position.current
             switch dice {
             case .doe(isBackward: true):
-                return self.findAttackerBackwardPath(position.current)
+                let next = findAttackerBackwardPath(startNode)
+                return acc + [next]
                 
             default:
                 let step = abs(dice.numberOfMove)
-                return self.findAttackerNextNode(position.current, step: step)
+                let next = findAttackerNextNode(startNode, step: step)
+                return acc + [next]
             }
         }
         
-        let paths = serializedDices.map(asOneStepPath)
+        let paths = serializedDices.reduce([], asSerialPaths)
         return .init(serialPaths: paths)
     }
     
@@ -93,19 +96,57 @@ extension KnightPathSuggestServiceImple {
         var remain = step
         var nodes = [from]
         while remain > 0 {
-            let current = nodes.last!
             
-            guard current != .out, let nexts = self.attackerPaths[from]
-            else { return nodes }
+            let (previous, current, isFirst) = (nodes[safe: nodes.count-2], nodes.last!, remain == step)
             
-            if let shortCut = nexts.nextShortCutNode, remain == step {
-                nodes.append(shortCut)
-            } else {
-                nodes.append(nexts.nextNode)
+            guard let next = self.chooseAttackNextNode(previous, current, isFirst)
+            else {
+                return nodes
             }
+            nodes.append(next)
             remain -= 1
         }
         return nodes
+    }
+    
+    private func chooseAttackNextNode(_ previous: Node?, _ current: Node, _ isFirstStep: Bool) -> Node? {
+        switch current {
+        case .start: return .R1
+        case .R1: return .R2
+        case .R2: return .R3
+        case .R3: return .R4
+        case .R4: return .CTR
+        case .CTR where isFirstStep: return .DL1
+        case .CTR: return .T1
+        case .T1: return .T2
+        case .T2: return .T3
+        case .T3: return .T4
+        case .T4: return .CTL
+        case .CTL where isFirstStep: return .DR1
+        case .CTL: return .L1
+        case .L1: return .L2
+        case .L2: return .L3
+        case .L3: return .L4
+        case .L4: return .CBL
+        case .CBL: return .B1
+        case .B1: return .B2
+        case .B2: return .B3
+        case .B3: return .B4
+        case .B4: return .CBR
+        case .DL1: return .DL2
+        case .DL2: return .INT
+        case .INT where isFirstStep: return .DR3
+        case .INT where previous == .DL2: return .DL3
+        case .INT: return .DR3
+        case .DL3: return .DL4
+        case .DL4: return .CBL
+        case .DR1: return .DR2
+        case .DR2: return .INT
+        case .DR3: return .DR4
+        case .DR4: return .CBR
+        case .CBR: return .out
+        case .out: return nil
+        }
     }
     
     private func findAttackerBackwardPath(_ from: Node) -> KnightMovePath.PathPerDice {
