@@ -80,48 +80,6 @@ extension Node {
         }
     }
     
-    static var attackLinkedPath: [Node: NextNodes] {
-        [
-            .start : .init(.R1),
-            .R1: .init(.R2),
-            .R2: .init(.R3),
-            .R3: .init(.R4),
-            .R4: .init(.CTR),
-            .CTR: .init(.T1, shortCut: .DL1),
-            .T1: .init(.T2),
-            .T2: .init(.T3),
-            .T3: .init(.T4),
-            .T4: .init(.CTL),
-            .CTL: .init(.L1, shortCut: .DR1),
-            .L1: .init(.L2),
-            .L2: .init(.L3),
-            .L3: .init(.L4),
-            .L4: .init(.CBL),
-            .CBL: .init(.B1),
-            .B1: .init(.B2),
-            .B2: .init(.B3),
-            .B3: .init(.B4),
-            .B4: .init(.CBR),
-            .DL1: .init(.DL2),
-            .DL2: .init(.INT),
-            .INT: .init(.DL3, shortCut: .DR3),
-            .DL3: .init(.DL4),
-            .DL4: .init(.CBL),
-            .DR1: .init(.DR2),
-            .DR2: .init(.INT),
-            .DR3: .init(.DR4),
-            .DR4: .init(.CBR),
-            .CBR: .init(.out)
-        ]
-    }
-    
-    func isAttackerShortPath(to: Node) -> Bool {
-        switch (self, to) {
-        case (.CTR, .DL1), (.INT, .DR3), (.CTL, .DR1): return true
-        default: return false
-        }
-    }
-    
     static var defenceLinkedPath: [Node: NextNodes] {
         [
             .start: .init(.B4, shortCut: .DR4),
