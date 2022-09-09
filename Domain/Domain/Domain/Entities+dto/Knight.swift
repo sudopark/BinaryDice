@@ -43,7 +43,7 @@ public struct KnightPosition {
     
     let knight: Knights
     let current: Node
-    var previousPositions: [Node]?
+    var comesFrom: [Node]?
     
     init(
         _ knight: Knights,

@@ -32,35 +32,16 @@ public typealias NodeId = String
 
 public enum Node: String {
     case start
-    case CBR
-    case R1
-    case R2
-    case R3
-    case R4
+    case CBR, R1, R2, R3, R4
     case CTR
-    case T1
-    case T2
-    case T3
-    case T4
+    case T1, T2, T3, T4
     case CTL
-    case L1
-    case L2
-    case L3
-    case L4
+    case L1, L2, L3, L4
     case CBL
-    case B1
-    case B2
-    case B3
-    case B4
+    case B1, B2, B3, B4
     case INT
-    case DL1
-    case DL2
-    case DL3
-    case DL4
-    case DR1
-    case DR2
-    case DR3
-    case DR4
+    case DL1, DL2, DL3, DL4
+    case DR1, DR2, DR3, DR4
     case out
 }
 
