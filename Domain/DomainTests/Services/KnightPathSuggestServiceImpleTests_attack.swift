@@ -1,5 +1,5 @@
 //
-//  KnightPathSuggestServiceImpleTests.swift
+//  KnightPathSuggestServiceImpleTests_attack.swift
 //  DomainTests
 //
 //  Created by sudo.park on 2022/09/07.
@@ -10,7 +10,7 @@ import XCTest
 import AsyncAlgorithms
 @testable import Domain
 
-class KnightPathSuggestServiceImpleTests: XCTestCase {
+class KnightPathSuggestServiceImpleTests_attack: XCTestCase {
     
     var attacker: Knights {
         return Knights(knights: [.init(playerId: "some", isDefence: false)])
@@ -18,7 +18,7 @@ class KnightPathSuggestServiceImpleTests: XCTestCase {
 }
 
 
-extension KnightPathSuggestServiceImpleTests {
+extension KnightPathSuggestServiceImpleTests_attack {
     
     func testService_suggestShortCutFromShortCutPositions() async {
         // given
@@ -177,6 +177,156 @@ extension KnightPathSuggestServiceImpleTests {
             [ [.L2, .L3, .L4, .CBL, .B1] ],
             [ [.B1, .B2, .B3, .B4, .CBR] ],
             [ [.CBR, .out] ]
+        ])
+    }
+}
+
+extension KnightPathSuggestServiceImpleTests_attack {
+
+    func testService_whenBackdoeFromStart_noSuggestingPath() async {
+        // given
+        let service = KnightPathSuggestServiceImple()
+        
+        // when
+        let dices: [BinaryDice] = [.doe(isBackward: true)]
+        let paths = await self.knightSerailAttackMovePaths(service, for: dices)
+        
+        // then
+        let visitNodes = paths.map { $0.serialPaths }
+        XCTAssertEqual(visitNodes, [
+            [[.start]]
+        ])
+    }
+    
+    func testService_whenINTPositionKnightIsComeFromDL2_suggestDL2() async {
+        // given
+        let service = KnightPathSuggestServiceImple()
+        
+        // when
+        var position = KnightPosition(self.attacker, at: .INT)
+        position.comesFrom = [.DL2]
+        let paths = await service.suggestPath(at: position, with: [.doe(isBackward: true)])
+        
+        // then
+        let nodes = paths.map { $0.serialPaths }
+        XCTAssertEqual(nodes, [
+            [ [.INT, .DL2] ]
+        ])
+    }
+    
+    func testService_whenINTPositionKnightIsComeFromDR2_suggestDR2() async {
+        // given
+        let service = KnightPathSuggestServiceImple()
+        
+        // when
+        var position = KnightPosition(self.attacker, at: .INT)
+        position.comesFrom = [.DR2]
+        let paths = await service.suggestPath(at: position, with: [.doe(isBackward: true)])
+        
+        // then
+        let nodes = paths.map { $0.serialPaths }
+        XCTAssertEqual(nodes, [
+            [ [.INT, .DR2] ]
+        ])
+    }
+    
+    func testService_whenINTPositionKnightsComeFromDL2AndDR2_suggestDL2_DR2() async {
+        // given
+        let service = KnightPathSuggestServiceImple()
+        
+        // when
+        var position = KnightPosition(self.attacker, at: .INT)
+        position.comesFrom = [.DL2, .DR2]
+        let paths = await service.suggestPath(at: position, with: [.doe(isBackward: true)])
+        
+        // then
+        let pathToDL2 = KnightMovePath(serialPaths: [ [.INT, .DL2] ])
+        let pathToDR2 = KnightMovePath(serialPaths: [ [.INT, .DR2] ])
+        XCTAssertEqual(paths.count, 2)
+        XCTAssertEqual(paths.contains(pathToDL2), true)
+        XCTAssertEqual(paths.contains(pathToDR2), true)
+    }
+    
+    func testService_whenCBLPositionKnightIsComeFromDL4_suggestDL4() async {
+        // given
+        let service = KnightPathSuggestServiceImple()
+        
+        // when
+        var position = KnightPosition(self.attacker, at: .CBL)
+        position.comesFrom = [.DL4]
+        let paths = await service.suggestPath(at: position, with: [.doe(isBackward: true)])
+        
+        // then
+        let nodes = paths.map { $0.serialPaths }
+        XCTAssertEqual(nodes, [
+            [ [.CBL, .DL4] ]
+        ])
+    }
+    
+    func testService_whenCBLPositionKnightIsComeFromL4_suggestL4() async {
+        // given
+        let service = KnightPathSuggestServiceImple()
+        
+        // when
+        var position = KnightPosition(self.attacker, at: .CBL)
+        position.comesFrom = [.L4]
+        let paths = await service.suggestPath(at: position, with: [.doe(isBackward: true)])
+        
+        // then
+        let nodes = paths.map { $0.serialPaths }
+        XCTAssertEqual(nodes, [
+            [ [.CBL, .L4] ]
+        ])
+    }
+    
+    func testService_whenCBLPositionKnightsComeFromDL4AndL4_suggestDL4_L4() async {
+        // given
+        let service = KnightPathSuggestServiceImple()
+        
+        // when
+        var position = KnightPosition(self.attacker, at: .CBL)
+        position.comesFrom = [.DL4, .L4]
+        let paths = await service.suggestPath(at: position, with: [.doe(isBackward: true)])
+        
+        // then
+        let pathToDL4 = KnightMovePath(serialPaths: [ [.CBL, .DL4] ])
+        let pathToL4 = KnightMovePath(serialPaths: [ [.CBL, .L4] ])
+        XCTAssertEqual(paths.count, 2)
+        XCTAssertEqual(paths.contains(pathToDL4), true)
+        XCTAssertEqual(paths.contains(pathToL4), true)
+    }
+    
+    func testService_suggestPath_backDoeviaR1CBR() async {
+        // given
+        let service = KnightPathSuggestServiceImple()
+        
+        // when
+        let dices: [BinaryDice] = [.doe(isBackward: false), .doe(isBackward: true), .gae]
+        let paths = await self.knightSerailAttackMovePaths(service, for: dices)
+        
+        // then
+        let visitNodes = paths.map { $0.serialPaths }
+        XCTAssertEqual(visitNodes, [
+            [ [.start, .R1] ],
+            [ [.R1, .CBR] ],
+            [ [.CBR, .out] ]
+        ])
+    }
+    
+    func testService_suggestPath_backDoeviaR1CBRAndBackDoe_moveToR1() async {
+        // given
+        let service = KnightPathSuggestServiceImple()
+        
+        // when
+        let dices: [BinaryDice] = [.doe(isBackward: false), .doe(isBackward: true), .doe(isBackward: true)]
+        let paths = await self.knightSerailAttackMovePaths(service, for: dices)
+        
+        // then
+        let visitNodes = paths.map { $0.serialPaths }
+        XCTAssertEqual(visitNodes, [
+            [ [.start, .R1] ],
+            [ [.R1, .CBR] ],
+            [ [.CBR, .R1] ]
         ])
     }
 }

@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		F690086828C667FD00D6CDC7 /* KnightPathSuggestService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F690086728C667FD00D6CDC7 /* KnightPathSuggestService.swift */; };
 		F690087528C7A31E00D6CDC7 /* Algorithms in Frameworks */ = {isa = PBXBuildFile; productRef = F690087428C7A31E00D6CDC7 /* Algorithms */; };
-		F690087828C7A93100D6CDC7 /* KnightPathSuggestServiceImpleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F690087728C7A93100D6CDC7 /* KnightPathSuggestServiceImpleTests.swift */; };
+		F690087828C7A93100D6CDC7 /* KnightPathSuggestServiceImpleTests_attack.swift in Sources */ = {isa = PBXBuildFile; fileRef = F690087728C7A93100D6CDC7 /* KnightPathSuggestServiceImpleTests_attack.swift */; };
 		F690087B28C7AE7400D6CDC7 /* AsyncAlgorithms in Frameworks */ = {isa = PBXBuildFile; productRef = F690087A28C7AE7400D6CDC7 /* AsyncAlgorithms */; };
 		F690087E28C9E31D00D6CDC7 /* Array+extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F690087D28C9E31D00D6CDC7 /* Array+extension.swift */; };
 		F6D229FF28C4F5B90091E3C8 /* Domain.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6D229F628C4F5B90091E3C8 /* Domain.framework */; };
@@ -36,7 +36,7 @@
 
 /* Begin PBXFileReference section */
 		F690086728C667FD00D6CDC7 /* KnightPathSuggestService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnightPathSuggestService.swift; sourceTree = "<group>"; };
-		F690087728C7A93100D6CDC7 /* KnightPathSuggestServiceImpleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnightPathSuggestServiceImpleTests.swift; sourceTree = "<group>"; };
+		F690087728C7A93100D6CDC7 /* KnightPathSuggestServiceImpleTests_attack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnightPathSuggestServiceImpleTests_attack.swift; sourceTree = "<group>"; };
 		F690087D28C9E31D00D6CDC7 /* Array+extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+extension.swift"; sourceTree = "<group>"; };
 		F6D229F628C4F5B90091E3C8 /* Domain.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Domain.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F6D229F928C4F5B90091E3C8 /* Domain.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Domain.h; sourceTree = "<group>"; };
@@ -88,7 +88,7 @@
 		F690087628C7A91800D6CDC7 /* Services */ = {
 			isa = PBXGroup;
 			children = (
-				F690087728C7A93100D6CDC7 /* KnightPathSuggestServiceImpleTests.swift */,
+				F690087728C7A93100D6CDC7 /* KnightPathSuggestServiceImpleTests_attack.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -292,7 +292,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F690087828C7A93100D6CDC7 /* KnightPathSuggestServiceImpleTests.swift in Sources */,
+				F690087828C7A93100D6CDC7 /* KnightPathSuggestServiceImpleTests_attack.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
