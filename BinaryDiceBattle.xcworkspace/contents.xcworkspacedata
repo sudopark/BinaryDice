@@ -4,4 +4,11 @@
    <FileRef
       location = "group:Domain/Domain.xcodeproj">
    </FileRef>
+   <Group
+      location = "container:"
+      name = "Supports">
+      <FileRef
+         location = "group:Supports/ThirdParty/ThirdParty.xcodeproj">
+      </FileRef>
+   </Group>
 </Workspace>
