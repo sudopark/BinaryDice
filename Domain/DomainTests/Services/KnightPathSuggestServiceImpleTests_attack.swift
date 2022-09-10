@@ -301,8 +301,16 @@ extension KnightPathSuggestServiceImpleTests_attack {
         let service = KnightPathSuggestServiceImple()
         
         // when
-        let dices: [BinaryDice] = [.doe(isBackward: false), .doe(isBackward: true), .gae]
-        let paths = await self.knightSerailAttackMovePaths(service, for: dices)
+        var position = KnightPosition(self.attacker, at: .start)
+        var paths = await service.suggestPath(at: position, with: [.doe(isBackward: false)])
+        
+        position = KnightPosition(self.attacker, at: .R1)
+        position.comesFrom = [.start]
+        paths += await service.suggestPath(at: position, with: [.doe(isBackward: true)])
+        
+        position = KnightPosition(self.attacker, at: .CBR)
+        position.comesFrom = [.R1]
+        paths += await service.suggestPath(at: position, with: [.gae])
         
         // then
         let visitNodes = paths.map { $0.serialPaths }
@@ -318,8 +326,16 @@ extension KnightPathSuggestServiceImpleTests_attack {
         let service = KnightPathSuggestServiceImple()
         
         // when
-        let dices: [BinaryDice] = [.doe(isBackward: false), .doe(isBackward: true), .doe(isBackward: true)]
-        let paths = await self.knightSerailAttackMovePaths(service, for: dices)
+        var position = KnightPosition(self.attacker, at: .start)
+        var paths = await service.suggestPath(at: position, with: [.doe(isBackward: false)])
+        
+        position = KnightPosition(self.attacker, at: .R1)
+        position.comesFrom = [.start]
+        paths += await service.suggestPath(at: position, with: [.doe(isBackward: true)])
+        
+        position = KnightPosition(self.attacker, at: .CBR)
+        position.comesFrom = [.R1]
+        paths += await service.suggestPath(at: position, with: [.doe(isBackward: true)])
         
         // then
         let visitNodes = paths.map { $0.serialPaths }
@@ -328,5 +344,57 @@ extension KnightPathSuggestServiceImpleTests_attack {
             [ [.R1, .CBR] ],
             [ [.CBR, .R1] ]
         ])
+    }
+    
+    func testService_suggesKnighttPath_withBackwardDoe() async {
+        // given
+        let service = KnightPathSuggestServiceImple()
+        
+        // when
+        let dices: [BinaryDice] = [
+            .mo, .doe(isBackward: true)
+        ]
+        var position = KnightPosition(self.attacker, at: .T1)
+        position.comesFrom = [.CTR]
+        let paths = await service.suggestPath(at: position, with: dices)
+        
+        // then
+        let pathToMoveAndBack = KnightMovePath(serialPaths: [
+            [.T1, .T2, .T3, .T4, .CTL, .L1], [.L1, .CTL]
+        ])
+        let pathBackAndMove = KnightMovePath(serialPaths: [
+            [.T1, .CTR], [.CTR, .DL1, .DL2, .INT, .DL3, .DL4]
+        ])
+        XCTAssertEqual(paths.count, 2)
+        XCTAssertEqual(paths.contains(pathToMoveAndBack), true)
+        XCTAssertEqual(paths.contains(pathBackAndMove), true)
+    }
+    
+    func testService_suggestKnightsPath_wthBackward() async {
+        // given
+        let service = KnightPathSuggestServiceImple()
+        
+        // when
+        let dices: [BinaryDice] = [
+            .gae, .doe(isBackward: true)
+        ]
+        var position = KnightPosition(self.attacker, at: .INT)
+        position.comesFrom = [.DL2, .DR2]
+        let paths = await service.suggestPath(at: position, with: dices)
+        
+        // then
+        let pathMoveAndBack = KnightMovePath(serialPaths: [
+            [.INT, .DR3, .DR4], [.DR4, .DR3]
+        ])
+        let pathBackToDLAndMove = KnightMovePath(serialPaths: [
+            [.INT, .DL2], [.DL2, .INT, .DL3]
+        ])
+        let pathBackToDRAndMove = KnightMovePath(serialPaths: [
+            [.INT, .DR2], [.DR2, .INT, .DR3]
+        ])
+        XCTAssertEqual(paths.count, 3)
+        XCTAssertEqual(paths.contains(pathMoveAndBack), true)
+        XCTAssertEqual(paths.contains(pathBackToDLAndMove), true)
+        XCTAssertEqual(paths.contains(pathBackToDRAndMove), true)
     }
 }
