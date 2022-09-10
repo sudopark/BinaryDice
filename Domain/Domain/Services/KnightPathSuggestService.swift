@@ -8,6 +8,7 @@
 import Foundation
 import Algorithms
 
+
 public struct KnightMovePath: Equatable {
     
     public typealias PathPerDice = [Node]
@@ -65,31 +66,39 @@ extension KnightPathSuggestServiceImple {
         let possibleDiceSelections = dices.permutations()
         
         return possibleDiceSelections
-            .map { self.findPathForAttacker(at: position, with: $0) }
+            .flatMap { self.findPathForAttacker(at: position, with: $0) }
     }
     
     private func findPathForAttacker(
         at position: KnightPosition,
         with serializedDices: [BinaryDice]
-    ) -> KnightMovePath {
+    ) -> [KnightMovePath] {
         
         typealias PathPerDice = KnightMovePath.PathPerDice
-        let asSerialPaths: ([PathPerDice], BinaryDice) -> [PathPerDice] = { acc, dice in
-            let startNode = acc.last?.last ?? position.current
+        let asSerialPaths: ([KnightMovePath], BinaryDice) -> [KnightMovePath] = { acc, dice in
             switch dice {
             case .doe(isBackward: true):
-                let next = findAttackerBackwardPath(startNode)
-                return acc + [next]
+                let appendNextPath: (KnightMovePath) -> [KnightMovePath] = { path in
+                    let currentNode = path.serialPaths.last?.last ?? position.current
+                    let comeFrom = path.serialPaths.comesFrom.map { [$0] } ?? position.comesFrom
+                    let nexts = self.findAttackerBackwardPath(currentNode, comeFrom)
+                    return nexts.map { .init(serialPaths: path.serialPaths + [$0]) }
+                }
+                return acc.flatMap(appendNextPath)
                 
             default:
                 let step = abs(dice.numberOfMove)
-                let next = findAttackerNextNode(startNode, step: step)
-                return acc + [next]
+                let appendNextPath: (KnightMovePath) -> KnightMovePath = { path in
+                    let currentNode = path.serialPaths.last?.last ?? position.current
+                    let next = self.findAttackerNextNode(currentNode, step: step)
+                    return .init(serialPaths: path.serialPaths + [next])
+                }
+                return acc.map(appendNextPath)
             }
         }
         
-        let paths = serializedDices.reduce([], asSerialPaths)
-        return .init(serialPaths: paths)
+        let initialPath = KnightMovePath(serialPaths: [])
+        return serializedDices.reduce([initialPath], asSerialPaths)
     }
     
     private func findAttackerNextNode(_ from: Node, step: Int) -> KnightMovePath.PathPerDice {
@@ -149,9 +158,18 @@ extension KnightPathSuggestServiceImple {
         }
     }
     
-    private func findAttackerBackwardPath(_ from: Node) -> KnightMovePath.PathPerDice {
-        // TODO
-        return [from]
+    private func findAttackerBackwardPath(
+        _ current: Node,
+        _ comesFrom: [Node]?
+    ) -> [KnightMovePath.PathPerDice] {
+        
+        let asPreviousPointToPath: (Node) -> KnightMovePath.PathPerDice = { node in
+            switch node {
+            case .start: return [current, .CBR]
+            default: return [current, node]
+            }
+        }
+        return comesFrom?.map(asPreviousPointToPath) ?? [ [current] ]
     }
 }
 
@@ -166,5 +184,14 @@ extension KnightPathSuggestServiceImple {
     ) -> [KnightMovePath] {
         // TODO
         return []
+    }
+}
+
+
+private extension Array where Element == KnightMovePath.PathPerDice {
+    
+    var comesFrom: Node? {
+        guard let last = self.last else { return nil }
+        return last[safe: last.count-2]
     }
 }
