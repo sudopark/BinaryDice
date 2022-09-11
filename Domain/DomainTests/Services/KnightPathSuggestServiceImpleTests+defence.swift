@@ -63,11 +63,21 @@ extension KnightPathSuggestServiceImpleTests_defence {
         
         // then
         XCTAssertEqual(paths.count, 5)
-        XCTAssertEqual(paths.hasPath([ [.start, .CBL, .DL3] ]), true)
-        XCTAssertEqual(paths.hasPath([ [.start, .B3, .L3] ]), true)
-        XCTAssertEqual(paths.hasPath([ [.start, .CBL, .L3] ]), true)
-        XCTAssertEqual(paths.hasPath([ [.start, .DR1, .T4] ]), true)
-        XCTAssertEqual(paths.hasPath([ [.start, .DR3, .T4] ]), true)
+        XCTAssertEqual(paths.hasPath([
+            [.start, .B4, .B3, .B2, .B1, .CBL], [.CBL, .L4, .L3]
+        ]), true)
+        XCTAssertEqual(paths.hasPath([
+            [.start, .B4, .B3], [.B3, .B2, .B1, .CBL, .L4, .L3]
+        ]), true)
+        XCTAssertEqual(paths.hasPath([
+            [.start, .B4, .B3, .B2, .B1, .CBL], [.CBL, .DL4, .DL3]
+        ]), true)
+        XCTAssertEqual(paths.hasPath([
+            [.start, .DR4, .DR3, .INT, .DR2, .DR1], [.DR1, .CTL, .T4]
+        ]), true)
+        XCTAssertEqual(paths.hasPath([
+            [.start, .DR4, .DR3], [.DR3, .INT, .DR2, .DR1, .CTL, .T4]
+        ]), true)
     }
     
     // 도착지가 분기지점이 아닌경우에는 한가지 경로만 추천
@@ -93,59 +103,143 @@ extension KnightPathSuggestServiceImpleTests_defence {
     // 방어경로 최단경로 추천: START -> INT -> CTR -> OUT
     func testService_suggestPath_via_INT_CTR() async {
         // given
-        let dices: [BinaryDice] = [
-            .gul, .gul, .mo, .doe(isBackward: false)
-        ]
+        var paths: [KnightMovePath] = []
         
         // when
-        let paths = await self.knightSerailMovePaths(self.defender, for: dices)
+        var position = KnightPosition(self.defender, at: .start)
+        paths += await service.suggestPath(at: position, with: [.gul])
+        
+        position = KnightPosition(self.defender, at: .INT)
+        paths += await service.suggestPath(at: position, with: [.gul])
+        
+        position = KnightPosition(self.defender, at: .CTR)
+        paths += await service.suggestPath(at: position, with: [.mo])
+        
+        position = KnightPosition(self.defender, at: .CBR)
+        paths += await service.suggestPath(at: position, with: [.doe(isBackward: false)])
         
         // then
-        XCTAssertEqual(paths.count, 2)
         XCTAssertEqual(paths.hasPath([
-            [.start, .DR4, .DR3, .INT], [.INT, .DL2, .DL1, .CTR], [.CTR, .R4, .R3, .R2, .R1, .CBR], [.CBR, .out]
+            [.start, .DR4, .DR3, .INT]
         ]), true)
         XCTAssertEqual(paths.hasPath([
-            [.start, .B4, .B3, .B2], [.B2, .B1, .CBL, .L4], [.L4, .L3, .L2, .L1, .CTL, .T4], [.T4, .T3]
+            [.INT, .DL2, .DL1, .CTR]
+        ]), true)
+        XCTAssertEqual(paths.hasPath([
+            [.CTR, .R4, .R3, .R2, .R1, .CBR]
+        ]), true)
+        XCTAssertEqual(paths.hasPath([
+            [.CBR, .out]
         ]), true)
     }
     
-    // 방어경로 단축경로1 추천: START -> CTL -> CTR -> OUT / START -> CBL -> CTR -> OUT
+    // 방어경로 단축경로1 추천: START -> CTL -> CTR -> OUT
     func testService_suggestPath_via_CTL_CTR() async {
         // given
-        let dices: [BinaryDice] = [.mo, .mo, .mo, .gae]
+        var paths: [KnightMovePath] = []
         
         // when
-        let paths = await self.knightSerailMovePaths(self.defender, for: dices)
+        var position = KnightPosition(self.defender, at: .start)
+        paths += await service.suggestPath(at: position, with: [.mo])
+
+        position = KnightPosition(self.defender, at: .DR1)
+        paths += await service.suggestPath(at: position, with: [.mo])
+        
+        position = KnightPosition(self.defender, at: .T1)
+        paths += await service.suggestPath(at: position, with: [.mo])
+        
+        position = KnightPosition(self.defender, at: .R1)
+        paths += await service.suggestPath(at: position, with: [.gae])
         
         // then
-        XCTAssertEqual(paths.count, 3)
         XCTAssertEqual(paths.hasPath([
-            [.start, .DR4, .DR3, .INT, .DR2, .DR1], [.DR1, .CTL, .T4, .T3, .T2, .T1], [.T1, .CTR, .R4, .R3, .R2, .R1], [.R1, .CBR, .out]
+            [.start, .DR4, .DR3, .INT, .DR2, .DR1]
         ]), true)
         XCTAssertEqual(paths.hasPath([
-            [.start, .B4, .B3, .B2, .B1, .CBL], [.CBL, .DL4, .DL3, .INT, .DL2, .DL1], [.DL1, .CTR, .R4, .R3, .R2, .R1], [.R1, .CBR, .out]
+            [.DR1, .CTL, .T4, .T3, .T2, .T1]
         ]), true)
         XCTAssertEqual(paths.hasPath([
-            [.start, .B4, .B3, .B2, .B1, .CBL], [.CBL, .L4, .L3, .L2, .L1, .CTL], [.CTL, .T4, .T3, .T2, .T1, .CTR], [.CTR, .R4, .R3]
+            [.T1, .CTR, .R4, .R3, .R2, .R1]
+        ]), true)
+        XCTAssertEqual(paths.hasPath([
+            [.R1, .CBR, .out]
+        ]), true)
+    }
+    
+    func testService_suggestPath_via_CBL_CTR() async {
+        // given
+        var paths: [KnightMovePath] = []
+        
+        // when
+        var position = KnightPosition(self.defender, at: .start)
+        paths += await service.suggestPath(at: position, with: [.mo])
+
+        position = KnightPosition(self.defender, at: .CBL)
+        paths += await service.suggestPath(at: position, with: [.mo])
+        
+        position = KnightPosition(self.defender, at: .DL1)
+        paths += await service.suggestPath(at: position, with: [.mo])
+        
+        position = KnightPosition(self.defender, at: .R1)
+        paths += await service.suggestPath(at: position, with: [.gae])
+        
+        // then
+        XCTAssertEqual(paths.hasPath([
+            [.start, .B4, .B3, .B2, .B1, .CBL]
+        ]), true)
+        XCTAssertEqual(paths.hasPath([
+            [.CBL, .DL4, .DL3, .INT, .DL2, .DL1]
+        ]), true)
+        XCTAssertEqual(paths.hasPath([
+            [.DL1, .CTR, .R4, .R3, .R2, .R1]
+        ]), true)
+        XCTAssertEqual(paths.hasPath([
+            [.R1, .CBR, .out]
         ]), true)
     }
     
     // 방어경로 외곽 경로 추천: START -> CBL -> CTL -> CTR -> OUT
     func testService_suggestPath_via_CBL_CTL_CTR() async {
         // given
-        let dices: [BinaryDice] = [.yut, .yut, .yut, .yut, .yut, .doe(isBackward: false)]
+        var paths: [KnightMovePath] = []
         
         // when
-        let paths = await self.knightSerailMovePaths(self.defender, for: dices)
+        var position = KnightPosition(self.defender, at: .start)
+        paths += await service.suggestPath(at: position, with: [.yut])
+        
+        position = KnightPosition(self.defender, at: .B1)
+        paths += await service.suggestPath(at: position, with: [.yut])
+        
+        position = KnightPosition(self.defender, at: .L2)
+        paths += await service.suggestPath(at: position, with: [.yut])
+        
+        position = KnightPosition(self.defender, at: .T3)
+        paths += await service.suggestPath(at: position, with: [.yut])
+        
+        position = KnightPosition(self.defender, at: .R4)
+        paths += await service.suggestPath(at: position, with: [.yut])
+        
+        position = KnightPosition(self.defender, at: .CBR)
+        paths += await service.suggestPath(at: position, with: [.doe(isBackward: false)])
         
         // then
-        XCTAssertEqual(paths.count, 2)
         XCTAssertEqual(paths.hasPath([
-            [.start, .B4, .B3, .B2, .B1], [.B1, .CBL, .L4, .L3, .L2], [.L2, .L1, .CTL, .T4, .T3], [.T3, .T2, .T1, .CTR, .R4],  [.R4, .R3, .R2, .R1, .CBR], [.CBR, .out]
+            [.start, .B4, .B3, .B2, .B1]
         ]), true)
         XCTAssertEqual(paths.hasPath([
-            [.start, .DR4, .DR3, .INT, .DR2], [.DR2, .DR1, .CTL, .T4, .T3], [.T3, .T2, .T1, .CTR, .R4], [.R4, .R3, .R2, .R1, .CBR], [.CBR, .out], []
+            [.B1, .CBL, .L4, .L3, .L2]
+        ]), true)
+        XCTAssertEqual(paths.hasPath([
+            [.L2, .L1, .CTL, .T4, .T3]
+        ]), true)
+        XCTAssertEqual(paths.hasPath([
+            [.T3, .T2, .T1, .CTR, .R4]
+        ]), true)
+        XCTAssertEqual(paths.hasPath([
+            [.R4, .R3, .R2, .R1, .CBR]
+        ]), true)
+        XCTAssertEqual(paths.hasPath([
+            [.CBR, .out]
         ]), true)
     }
 }
