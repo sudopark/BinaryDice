@@ -7,6 +7,7 @@
 
 import Foundation
 import Algorithms
+import Extensions
 
 
 public struct KnightMovePath: Equatable {

@@ -8,13 +8,13 @@
 
 /* Begin PBXBuildFile section */
 		F6768E5828CC306C005D7264 /* ThirdParty.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6768E5728CC306C005D7264 /* ThirdParty.framework */; };
-		F6768E5928CC306C005D7264 /* ThirdParty.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F6768E5728CC306C005D7264 /* ThirdParty.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F6768E5C28CC6243005D7264 /* ThirdParty.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6768E5B28CC6243005D7264 /* ThirdParty.framework */; };
 		F6768E5E28CC6C82005D7264 /* KnightPathSuggestServiceImpleTests+defence.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6768E5D28CC6C82005D7264 /* KnightPathSuggestServiceImpleTests+defence.swift */; };
 		F6768E6028CD890F005D7264 /* KnightPathSuggestServiceImpleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6768E5F28CD890F005D7264 /* KnightPathSuggestServiceImpleTests.swift */; };
 		F690086828C667FD00D6CDC7 /* KnightPathSuggestService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F690086728C667FD00D6CDC7 /* KnightPathSuggestService.swift */; };
 		F690087828C7A93100D6CDC7 /* KnightPathSuggestServiceImpleTests+attack.swift in Sources */ = {isa = PBXBuildFile; fileRef = F690087728C7A93100D6CDC7 /* KnightPathSuggestServiceImpleTests+attack.swift */; };
-		F690087E28C9E31D00D6CDC7 /* Array+extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F690087D28C9E31D00D6CDC7 /* Array+extension.swift */; };
+		F6917BE428CDCCCC00C8C4CB /* Extensions.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6917BE328CDCCCC00C8C4CB /* Extensions.framework */; };
+		F6917BE728CDCCE100C8C4CB /* Extensions.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6917BE628CDCCE100C8C4CB /* Extensions.framework */; };
 		F6D229FF28C4F5B90091E3C8 /* Domain.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6D229F628C4F5B90091E3C8 /* Domain.framework */; };
 		F6D22A0528C4F5B90091E3C8 /* Domain.h in Headers */ = {isa = PBXBuildFile; fileRef = F6D229F928C4F5B90091E3C8 /* Domain.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F6D22A1028C4F5DF0091E3C8 /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D22A0F28C4F5DF0091E3C8 /* Player.swift */; };
@@ -37,20 +37,6 @@
 		};
 /* End PBXContainerItemProxy section */
 
-/* Begin PBXCopyFilesBuildPhase section */
-		F6768E5A28CC306D005D7264 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				F6768E5928CC306C005D7264 /* ThirdParty.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
-
 /* Begin PBXFileReference section */
 		F6768E5728CC306C005D7264 /* ThirdParty.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ThirdParty.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F6768E5B28CC6243005D7264 /* ThirdParty.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ThirdParty.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -58,7 +44,8 @@
 		F6768E5F28CD890F005D7264 /* KnightPathSuggestServiceImpleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnightPathSuggestServiceImpleTests.swift; sourceTree = "<group>"; };
 		F690086728C667FD00D6CDC7 /* KnightPathSuggestService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnightPathSuggestService.swift; sourceTree = "<group>"; };
 		F690087728C7A93100D6CDC7 /* KnightPathSuggestServiceImpleTests+attack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KnightPathSuggestServiceImpleTests+attack.swift"; sourceTree = "<group>"; };
-		F690087D28C9E31D00D6CDC7 /* Array+extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+extension.swift"; sourceTree = "<group>"; };
+		F6917BE328CDCCCC00C8C4CB /* Extensions.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Extensions.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		F6917BE628CDCCE100C8C4CB /* Extensions.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Extensions.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F6D229F628C4F5B90091E3C8 /* Domain.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Domain.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F6D229F928C4F5B90091E3C8 /* Domain.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Domain.h; sourceTree = "<group>"; };
 		F6D229FE28C4F5B90091E3C8 /* DomainTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DomainTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -77,6 +64,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F6917BE428CDCCCC00C8C4CB /* Extensions.framework in Frameworks */,
 				F6768E5828CC306C005D7264 /* ThirdParty.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -85,6 +73,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F6917BE728CDCCE100C8C4CB /* Extensions.framework in Frameworks */,
 				F6768E5C28CC6243005D7264 /* ThirdParty.framework in Frameworks */,
 				F6D229FF28C4F5B90091E3C8 /* Domain.framework in Frameworks */,
 			);
@@ -96,6 +85,8 @@
 		F6768E5628CC306C005D7264 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				F6917BE628CDCCE100C8C4CB /* Extensions.framework */,
+				F6917BE328CDCCCC00C8C4CB /* Extensions.framework */,
 				F6768E5B28CC6243005D7264 /* ThirdParty.framework */,
 				F6768E5728CC306C005D7264 /* ThirdParty.framework */,
 			);
@@ -125,14 +116,6 @@
 			path = Services;
 			sourceTree = "<group>";
 		};
-		F690087C28C9E30300D6CDC7 /* Utils */ = {
-			isa = PBXGroup;
-			children = (
-				F690087D28C9E31D00D6CDC7 /* Array+extension.swift */,
-			);
-			path = Utils;
-			sourceTree = "<group>";
-		};
 		F6D229EC28C4F5B90091E3C8 = {
 			isa = PBXGroup;
 			children = (
@@ -157,7 +140,6 @@
 			children = (
 				F6D22A0E28C4F5C60091E3C8 /* Domain */,
 				F6D22A2028C645000091E3C8 /* Services */,
-				F690087C28C9E30300D6CDC7 /* Utils */,
 				F6D229F928C4F5B90091E3C8 /* Domain.h */,
 			);
 			path = Domain;
@@ -211,7 +193,6 @@
 				F6D229F228C4F5B90091E3C8 /* Sources */,
 				F6D229F328C4F5B90091E3C8 /* Frameworks */,
 				F6D229F428C4F5B90091E3C8 /* Resources */,
-				F6768E5A28CC306D005D7264 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -312,7 +293,6 @@
 				F6D22A1228C4F6E00091E3C8 /* Knight.swift in Sources */,
 				F6D22A1A28C4FCDE0091E3C8 /* GameService.swift in Sources */,
 				F6D22A1828C4FA800091E3C8 /* BinaryDice.swift in Sources */,
-				F690087E28C9E31D00D6CDC7 /* Array+extension.swift in Sources */,
 				F690086828C667FD00D6CDC7 /* KnightPathSuggestService.swift in Sources */,
 				F6D22A1028C4F5DF0091E3C8 /* Player.swift in Sources */,
 			);

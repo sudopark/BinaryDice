@@ -1,8 +1,8 @@
 //
-//  Array+extension.swift
-//  Domain
+//  Array+extensions.swift
+//  Extensions
 //
-//  Created by sudo.park on 2022/09/08.
+//  Created by sudo.park on 2022/09/11.
 //
 
 import Foundation

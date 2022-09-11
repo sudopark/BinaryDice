@@ -8,6 +8,9 @@
       location = "container:"
       name = "Supports">
       <FileRef
+         location = "group:Supports/Extensions/Extensions.xcodeproj">
+      </FileRef>
+      <FileRef
          location = "group:Supports/ThirdParty/ThirdParty.xcodeproj">
       </FileRef>
    </Group>
