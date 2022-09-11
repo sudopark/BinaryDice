@@ -1,5 +1,5 @@
 //
-//  Array+extensions.swift
+//  Array+Extensions.swift
 //  Extensions
 //
 //  Created by sudo.park on 2022/09/11.

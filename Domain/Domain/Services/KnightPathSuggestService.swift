@@ -42,7 +42,7 @@ public struct KnightPathSuggestServiceImple: KnightPathSuggestService {
         with dices: [BinaryDice]
     ) async -> [KnightMovePath] {
         return await withCheckedContinuation { continuation in
-            let path = position.knight.isDefence
+            let path = position.knight.isOnlyDefence()
                 ? self.suggestPathsForDefender(at: position, with: dices)
                 : self.suggestPathsForAttacker(at: position, with: dices)
             continuation.resume(returning: path)
@@ -56,7 +56,7 @@ extension KnightPathSuggestServiceImple {
     
     private func findBackwardPath(
         _ current: Node,
-        _ comesFrom: [Node]?
+        _ comesFrom: Set<Node>?
     ) -> [KnightMovePath.PathPerDice] {
         
         let asPreviousPointToPath: (Node) -> KnightMovePath.PathPerDice = { node in
@@ -100,7 +100,7 @@ extension KnightPathSuggestServiceImple {
             case .doe(isBackward: true):
                 let appendNextPath: (KnightMovePath) -> [KnightMovePath] = { path in
                     let currentNode = path.serialPaths.last?.last ?? position.current
-                    let comeFrom = path.serialPaths.comesFrom.map { [$0] } ?? position.comesFrom
+                    let comeFrom = path.serialPaths.comesFrom.map { Set([$0]) } ?? position.comesFrom
                     let nexts = self.findBackwardPath(currentNode, comeFrom)
                     return nexts.map { .init(serialPaths: path.serialPaths + [$0]) }
                 }
@@ -302,5 +302,12 @@ private extension Array where Element == KnightMovePath.PathPerDice {
         return self.map { path -> KnightMovePath.PathPerDice in
             return path + [node]
         }
+    }
+}
+
+private extension Knights {
+    
+    func isOnlyDefence() -> Bool {
+        return self.filter { $0.isDefence == false }.isEmpty
     }
 }

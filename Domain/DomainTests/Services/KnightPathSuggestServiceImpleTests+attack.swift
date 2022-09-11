@@ -13,7 +13,7 @@ import AsyncAlgorithms
 class KnightPathSuggestServiceImpleTests_attack: KnightPathSuggestServiceImpleTests {
     
     var attacker: Knights {
-        return Knights(knights: [.init(playerId: "some", isDefence: false)])
+        return [.init(playerId: "some", isDefence: false)]
     }
 }
 
