@@ -10,7 +10,8 @@
 		F6917BD128CDCC8A00C8C4CB /* Extensions.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6917BC828CDCC8A00C8C4CB /* Extensions.framework */; };
 		F6917BD628CDCC8A00C8C4CB /* ExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6917BD528CDCC8A00C8C4CB /* ExtensionsTests.swift */; };
 		F6917BD728CDCC8A00C8C4CB /* Extensions.h in Headers */ = {isa = PBXBuildFile; fileRef = F6917BCB28CDCC8A00C8C4CB /* Extensions.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F6917BE228CDCCA600C8C4CB /* Array+extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6917BE128CDCCA600C8C4CB /* Array+extensions.swift */; };
+		F6917BE228CDCCA600C8C4CB /* Array+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6917BE128CDCCA600C8C4CB /* Array+Extensions.swift */; };
+		F6F8919728CEF601008621D5 /* Time+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6F8919628CEF601008621D5 /* Time+Extensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -28,7 +29,8 @@
 		F6917BCB28CDCC8A00C8C4CB /* Extensions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Extensions.h; sourceTree = "<group>"; };
 		F6917BD028CDCC8A00C8C4CB /* ExtensionsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ExtensionsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F6917BD528CDCC8A00C8C4CB /* ExtensionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionsTests.swift; sourceTree = "<group>"; };
-		F6917BE128CDCCA600C8C4CB /* Array+extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+extensions.swift"; sourceTree = "<group>"; };
+		F6917BE128CDCCA600C8C4CB /* Array+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Extensions.swift"; sourceTree = "<group>"; };
+		F6F8919628CEF601008621D5 /* Time+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Time+Extensions.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -88,7 +90,8 @@
 		F6917BE028CDCC9800C8C4CB /* Type+Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				F6917BE128CDCCA600C8C4CB /* Array+extensions.swift */,
+				F6917BE128CDCCA600C8C4CB /* Array+Extensions.swift */,
+				F6F8919628CEF601008621D5 /* Time+Extensions.swift */,
 			);
 			path = "Type+Extensions";
 			sourceTree = "<group>";
@@ -203,7 +206,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F6917BE228CDCCA600C8C4CB /* Array+extensions.swift in Sources */,
+				F6F8919728CEF601008621D5 /* Time+Extensions.swift in Sources */,
+				F6917BE228CDCCA600C8C4CB /* Array+Extensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

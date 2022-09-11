@@ -13,7 +13,7 @@ import XCTest
 class KnightPathSuggestServiceImpleTests_defence: KnightPathSuggestServiceImpleTests {
     
     var defender: Knights {
-        return Knights(knights: [.init(playerId: "some", isDefence: true)])
+        return [.init(playerId: "some", isDefence: true)]
     }
 }
 

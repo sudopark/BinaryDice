@@ -10,12 +10,8 @@ import Foundation
 
 public protocol GameEvent { }
 
-public struct SetupKnightEvent: GameEvent {
-    public let playerId: String
-    public let knights: [Knight]
-}
-
 public struct GameStartEvent: GameEvent {
+    public let info: GameInfo
     public let firstPlayerId: String
 }
 
@@ -28,27 +24,30 @@ public struct RollDiceEvent: GameEvent {
     public let result: BinaryDice
 }
 
-public struct KnightMoveEvent: GameEvent {
-    public let playerId: String
-    public let knight: Knight
-    public let node: Node
-}
-
-public struct KnightKillEvent: GameEvent {
-    public let killer: Knight
-    public let dead: Knight
-    public let node: Node
-    public let plusScore: Int
+public struct NodeOccupationUpdateEvent: GameEvent {
+    
+    public struct Movement: Equatable {
+        public let knights: Knights
+        public let path: KnightMovePath
+    }
+    
+    public struct Battle: Equatable {
+        public let at: Node
+        public let killed: Knights
+    }
+    
+    public struct Merging: Equatable {
+        public let at: Node
+        public let newKnights: Knights
+    }
+    
+    public let movemensts: [Movement]
+    public let battles: [Battle]
+    public let knightPositions: [KnightPosition]
 }
 
 public struct ScoreUpdateEvent: GameEvent {
-    public let playerId: String
-    public let score: Int
-}
-
-public struct NodeOccupationUpdateEvent: GameEvent {
-    
-    public let occupied: [NodeId: Knights] = [:]
+    public let scoreMap: [PlayerId: Int]
 }
 
 public struct GameTurnUpdateEvent: GameEvent {

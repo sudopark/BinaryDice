@@ -12,7 +12,12 @@ public typealias PlayerId = String
 
 public struct Player {
     
-    public let userID: String
+    public let userId: String
     public let nickName: String
     public var thumbnail: String?
+    
+    public init(userId: String, nickName: String) {
+        self.userId = userId
+        self.nickName = nickName
+    }
 }
