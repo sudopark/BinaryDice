@@ -33,7 +33,6 @@ public protocol KnightPathSuggestService {
 public struct KnightPathSuggestServiceImple: KnightPathSuggestService {
     
     private typealias PathPerDice = KnightMovePath.PathPerDice
-    private let defenderPaths: [Node: Node.NextNodes] = Node.defenceLinkedPath
     
     public init() { }
     

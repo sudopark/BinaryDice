@@ -9,3 +9,11 @@ import Foundation
 
 
 public typealias TimeStamp = Double
+
+
+extension TimeStamp {
+    
+    public static func now() -> TimeStamp {
+        return Date().timeIntervalSince1970
+    }
+}
