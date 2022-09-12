@@ -25,4 +25,11 @@ public enum BinaryDice: Equatable, Sendable {
         case .mo: return 5
         }
     }
+    
+    var isRollOneMoreTime: Bool {
+        switch self {
+        case .yut, .mo: return true
+        default: return false
+        }
+    }
 }

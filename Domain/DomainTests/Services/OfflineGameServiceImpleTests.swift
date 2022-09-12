@@ -85,8 +85,9 @@ extension OfflineGameServiceImpleTests {
     private func setupGameStart() {
         let expect = expectation(description: "wait for start game")
         expect.expectedFulfillmentCount = 2
+        expect.assertForOverFulfill = false
         
-        let _ = self.waitPublishedValues(expect, self.service.gameEvents) {
+        let _ = self.waitPublishedValues(expect, self.service.gameEvents.prefix(2)) {
             self.service.enterGame(self.player1)
             self.service.enterGame(self.player2)
         }
