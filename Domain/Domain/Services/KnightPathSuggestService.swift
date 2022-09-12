@@ -10,7 +10,7 @@ import Algorithms
 import Extensions
 
 
-public struct KnightMovePath: Equatable {
+public struct KnightMovePath: Equatable, Sendable {
     
     public typealias PathPerDice = [Node]
     

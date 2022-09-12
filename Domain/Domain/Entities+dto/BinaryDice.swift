@@ -8,7 +8,7 @@
 import Foundation
 
 
-public enum BinaryDice: Equatable {
+public enum BinaryDice: Equatable, Sendable {
     
     case doe(isBackward: Bool)
     case gae

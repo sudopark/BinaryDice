@@ -22,8 +22,11 @@ public final class OfflineGameServiceImple: GameService {
         self.diceRoller = diceRoller
     }
     
+    private let events = PassthroughSubject<GameEvent, Never>()
+    
     public var gameEvents: AnyPublisher<GameEvent, Never> {
-        return Empty().eraseToAnyPublisher()
+        return self.events
+            .eraseToAnyPublisher()
     }
 }
 
