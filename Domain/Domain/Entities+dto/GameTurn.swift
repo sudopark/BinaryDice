@@ -9,7 +9,7 @@ import Foundation
 import Extensions
 
 
-public struct GameTurn {
+public struct GameTurn: Sendable {
     
     public let sequeceId: Int
     public let playerId: String

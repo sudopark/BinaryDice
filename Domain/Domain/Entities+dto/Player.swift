@@ -10,7 +10,7 @@ import Foundation
 
 public typealias PlayerId = String
 
-public struct Player {
+public struct Player: Sendable {
     
     public let userId: String
     public let nickName: String

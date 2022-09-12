@@ -8,7 +8,7 @@
 import Foundation
 
 
-public protocol GameEvent { }
+public protocol GameEvent: Sendable { }
 
 public struct GameStartEvent: GameEvent {
     public let info: GameInfo
@@ -26,19 +26,14 @@ public struct RollDiceEvent: GameEvent {
 
 public struct NodeOccupationUpdateEvent: GameEvent {
     
-    public struct Movement: Equatable {
+    public struct Movement: Equatable, Sendable {
         public let knights: Knights
         public let path: KnightMovePath
     }
     
-    public struct Battle: Equatable {
+    public struct Battle: Equatable, Sendable {
         public let at: Node
         public let killed: Knights
-    }
-    
-    public struct Merging: Equatable {
-        public let at: Node
-        public let newKnights: Knights
     }
     
     public let movemensts: [Movement]

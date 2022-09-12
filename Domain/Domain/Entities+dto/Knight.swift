@@ -41,7 +41,7 @@ extension Knights {
 }
 
 
-public struct KnightPosition: Equatable {
+public struct KnightPosition: Equatable, Sendable {
     
     public let knight: Knights
     public let current: Node

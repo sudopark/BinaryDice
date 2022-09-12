@@ -30,7 +30,7 @@ public typealias NodeId = String
 (CBL)        (B1)        (B2)      (B3)        (B4)        (CBR)
  */
 
-public enum Node: String {
+public enum Node: String, Sendable {
     case start
     case CBR, R1, R2, R3, R4
     case CTR

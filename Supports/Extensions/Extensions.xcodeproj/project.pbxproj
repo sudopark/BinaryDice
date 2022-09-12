@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F690BC8A28CEFCD7003EAEF2 /* Combine+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F690BC8928CEFCD7003EAEF2 /* Combine+Extensions.swift */; };
 		F6917BD128CDCC8A00C8C4CB /* Extensions.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6917BC828CDCC8A00C8C4CB /* Extensions.framework */; };
 		F6917BD628CDCC8A00C8C4CB /* ExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6917BD528CDCC8A00C8C4CB /* ExtensionsTests.swift */; };
 		F6917BD728CDCC8A00C8C4CB /* Extensions.h in Headers */ = {isa = PBXBuildFile; fileRef = F6917BCB28CDCC8A00C8C4CB /* Extensions.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -25,6 +26,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		F690BC8928CEFCD7003EAEF2 /* Combine+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Combine+Extensions.swift"; sourceTree = "<group>"; };
 		F6917BC828CDCC8A00C8C4CB /* Extensions.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Extensions.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F6917BCB28CDCC8A00C8C4CB /* Extensions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Extensions.h; sourceTree = "<group>"; };
 		F6917BD028CDCC8A00C8C4CB /* ExtensionsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ExtensionsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -92,6 +94,7 @@
 			children = (
 				F6917BE128CDCCA600C8C4CB /* Array+Extensions.swift */,
 				F6F8919628CEF601008621D5 /* Time+Extensions.swift */,
+				F690BC8928CEFCD7003EAEF2 /* Combine+Extensions.swift */,
 			);
 			path = "Type+Extensions";
 			sourceTree = "<group>";
@@ -207,6 +210,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F6F8919728CEF601008621D5 /* Time+Extensions.swift in Sources */,
+				F690BC8A28CEFCD7003EAEF2 /* Combine+Extensions.swift in Sources */,
 				F6917BE228CDCCA600C8C4CB /* Array+Extensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
