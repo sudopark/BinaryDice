@@ -145,8 +145,8 @@ extension OfflineGameServiceImpleTests {
         let updatedEvent = events[safe: 1] as? GameTurnUpdateEvent
         XCTAssertNotNil(diceEvent)
         XCTAssertEqual(updatedEvent?.turn.playerId, self.player1.userId)
-        XCTAssertEqual(updatedEvent?.turn.remainRollChangeCount, 0)
-        XCTAssertEqual(updatedEvent?.turn.pendingRollsForMove, [.gul])
+        XCTAssertEqual(updatedEvent?.turn.remainRollChanceCount, 0)
+        XCTAssertEqual(updatedEvent?.turn.pendingRollsForMove, [.gul: 1])
     }
     
     // 주사위 굴리고 윷이랑 모 나오면 턴정보에서 remainRoll 카운트 안깍김
@@ -171,11 +171,11 @@ extension OfflineGameServiceImpleTests {
         let rollEvent2 = events[safe: 2] as? RollDiceEvent
         let updateEvent2 = events[safe: 3] as? GameTurnUpdateEvent
         XCTAssertEqual(rollEvent1?.result, .yut)
-        XCTAssertEqual(updateEvent1?.turn.remainRollChangeCount, 1)
-        XCTAssertEqual(updateEvent1?.turn.pendingRollsForMove, [.yut])
+        XCTAssertEqual(updateEvent1?.turn.remainRollChanceCount, 1)
+        XCTAssertEqual(updateEvent1?.turn.pendingRollsForMove, [.yut: 1])
         XCTAssertEqual(rollEvent2?.result, .mo)
-        XCTAssertEqual(updateEvent2?.turn.remainRollChangeCount, 1)
-        XCTAssertEqual(updateEvent2?.turn.pendingRollsForMove, [.yut, .mo])
+        XCTAssertEqual(updateEvent2?.turn.remainRollChanceCount, 1)
+        XCTAssertEqual(updateEvent2?.turn.pendingRollsForMove, [.yut: 1, .mo: 1])
     }
     
     // 주사위 굴리고 결과에 따라 말 움직임 -> 점령정보 변경 이벤트 전파
@@ -183,26 +183,37 @@ extension OfflineGameServiceImpleTests {
         // given
         self.setupGameStart()
         let expect = expectation(description: "주사위 굴리고 + 말 이동한 이후에 점령정보 업데이트됨")
-        expect.expectedFulfillmentCount = 2
+        expect.expectedFulfillmentCount = 3
         expect.assertForOverFulfill = false
         
         // when
-        let events = self.waitPublishedValues(expect, self.service.gameEvents.dropFirst(2)) {
+        let events = self.waitPublishedValues(expect, self.service.gameEvents.dropFirst(1)) {
             self.mockDiceRoller.mocking = .yut
             self.service.rollDice(self.player1.userId)
-            self.service.moveKnight([self.player1Knights.first!.id], at: .init(serialPaths: [
-                [.start, .R1, .R2, .R3, .R4]
-            ]))
+            self.service.moveKnight(
+                self.player1.userId,
+                [self.player1Knights.first!.id],
+                through: .init(serialPaths: [.init(.yut, [.start, .R1, .R2, .R3, .R4])])
+            )
         }
         
         // then
-        let occupationEvent = events[safe: 0] as? NodeOccupationUpdateEvent
-        let updateEvent = events[safe: 1] as? GameTurnUpdateEvent
-        XCTAssertEqual(occupationEvent?.knightPositions, [
-            .init([self.player1Knights.first!], at: .R4) |> \.comesFrom .~ [.R3]
-        ])
-        XCTAssertEqual(updateEvent?.turn.pendingRollsForMove, [])
-        XCTAssertEqual(updateEvent?.turn.remainRollChangeCount, 1)
+        let updateEventAferDice = events[safe: 0] as? GameTurnUpdateEvent
+        let updateEventAfterMove = events[safe: 1] as? GameTurnUpdateEvent
+        let occupationEvent = events[safe: 2] as? NodeOccupationUpdateEvent
+    
+        XCTAssertEqual(updateEventAferDice?.turn.sequeceId, 0)
+        XCTAssertEqual(updateEventAferDice?.turn.playerId, self.player1.userId)
+        XCTAssertEqual(updateEventAferDice?.turn.remainRollChanceCount, 1)
+        XCTAssertEqual(updateEventAferDice?.turn.pendingRollsForMove, [.yut: 1])
+        
+        XCTAssertEqual(updateEventAfterMove?.turn.sequeceId, 0)
+        XCTAssertEqual(updateEventAfterMove?.turn.playerId, self.player1.userId)
+        XCTAssertEqual(updateEventAfterMove?.turn.remainRollChanceCount, 1)
+        XCTAssertEqual(updateEventAfterMove?.turn.pendingRollsForMove, [:])
+        
+        let position = occupationEvent?.knightPositions.position(for: self.player1Knights.first!.id)
+        XCTAssertEqual(position, .init([self.player1Knights.first!], at: .R4) |> \.comesFrom .~ [.R3])
     }
     
     // 말 이동 이후에 더이상 던질거 없으면 턴변경 이벤트 전파
@@ -210,21 +221,30 @@ extension OfflineGameServiceImpleTests {
         // given
         self.setupGameStart()
         let expect = expectation(description: "말 이동시킨 이후에 더이상 던질 주사위 없으면 턴 변경")
-        expect.expectedFulfillmentCount = 2
+        expect.expectedFulfillmentCount = 3
         
         // when
         let events = self.waitPublishedValues(expect, service.gameEvents.dropFirst(2)) {
             self.mockDiceRoller.mocking = .gae
             self.service.rollDice(self.player1.userId)
-            self.service.moveKnight([self.player1Knights.first!.id], at: .init(serialPaths: [
-                [.start, .R1, .R2]
-            ]))
+            self.service.moveKnight(
+                self.player1.userId,
+                [self.player1Knights.first!.id],
+                through: .init(serialPaths: [.init(.gae, [.start, .R1, .R2])])
+            )
         }
         
         // then
-        let occupationEvent = events[safe: 0] as? NodeOccupationUpdateEvent
-        let changeEvent = events[safe: 1] as? GameTurnChangeEvent
-        XCTAssertNotNil(occupationEvent)
+        let updateEventAfterMove = events[safe: 0] as? GameTurnUpdateEvent
+        let occupationEvent = events[safe: 1] as? NodeOccupationUpdateEvent
+        let changeEvent = events[safe: 2] as? GameTurnChangeEvent
+        XCTAssertEqual(updateEventAfterMove?.turn.sequeceId, 0)
+        XCTAssertEqual(updateEventAfterMove?.turn.playerId, self.player1.userId)
+        
+        let position = occupationEvent?.knightPositions.position(for: self.player1Knights.first!.id)
+        XCTAssertEqual(position, .init([self.player1Knights.first!], at: .R2) |> \.comesFrom .~ [.R1])
+        
+        XCTAssertEqual(changeEvent?.turn.sequeceId, 1)
         XCTAssertEqual(changeEvent?.turn.playerId, self.player2.userId)
     }
 }
@@ -243,11 +263,12 @@ extension OfflineGameServiceImpleTests {
         let _ = self.waitFirstPublishedValue(expect, turnChanged) {
             self.mockDiceRoller.mocking = .gae
             self.service.rollDice(self.player1.userId)
-            self.service.moveKnight([self.player1Knights.first!.id], at: .init(serialPaths: [
-                [.start, .R1, .R2]
-            ]))
+            self.service.moveKnight(
+                self.player1.userId,
+                [self.player1Knights.first!.id],
+                through: .init(serialPaths: [.init(.gae, [.start, .R1, .R2])])
+            )
         }
-        self.wait(for: [expect], timeout: 0.001)
     }
     
     // 말 하나 잡으면 턴정보 업데이트(롤카운트 +1)
@@ -255,36 +276,48 @@ extension OfflineGameServiceImpleTests {
         // given
         self.movePlayer1KnightAtR2()
         let expect = expectation(description: "상대말 잡고 턴 업데이트")
-        expect.expectedFulfillmentCount = 4
+        expect.expectedFulfillmentCount = 5
         
         // when
         let events = self.waitPublishedValues(expect, service.gameEvents) {
             self.mockDiceRoller.mocking = .gae
             self.service.rollDice(self.player2.userId)  // dice roll event + turn update event
-            self.service.moveKnight([self.player2Knights.first!.id], at: .init(serialPaths: [
-                [.start, .R1, .R2]
-            ]))   // occupation update event + turn update
+            
+            self.service.moveKnight(
+                self.player2.userId,
+                [self.player2Knights.first!.id],
+                through: .init(serialPaths: [.init(.gae, [.start, .R1, .R2])])
+            )   // occupation update event + turn update
         }
         
         // then
         let rollUpdateEvent = events[safe: 0] as? RollDiceEvent
         let turnUpdateEvent = events[safe: 1] as? GameTurnUpdateEvent
-        let occupationUpdateEvent = events[safe: 2] as? NodeOccupationUpdateEvent
-        let turnUpdateAgainEvent = events[safe: 3] as? GameTurnUpdateEvent
+        let turnUpdateEventAfterMove = events[safe: 2] as? GameTurnUpdateEvent
+        let occupationUpdateEvent = events[safe: 3] as? NodeOccupationUpdateEvent
+        let turnUpdateAgainEvent = events[safe: 4] as? GameTurnUpdateEvent
         XCTAssertEqual(rollUpdateEvent?.playerId, self.player2.userId)
         XCTAssertEqual(rollUpdateEvent?.result, .gae)
+        
+        XCTAssertEqual(turnUpdateEvent?.turn.sequeceId, 1)
         XCTAssertEqual(turnUpdateEvent?.turn.playerId, self.player2.userId)
-        XCTAssertEqual(turnUpdateEvent?.turn.pendingRollsForMove, [.gae])
-        XCTAssertEqual(turnUpdateEvent?.turn.remainRollChangeCount, 0)
-        XCTAssertEqual(occupationUpdateEvent?.movemensts, [.init(knights: [self.player2Knights.first!], path: .init(serialPaths: [
-            [.start, .R1, .R2]
-        ]))])
-        XCTAssertEqual(occupationUpdateEvent?.battles, [.init(at: .R2, killed: [self.player1Knights.first!])])
-        XCTAssertEqual(occupationUpdateEvent?.knightPositions, [
-            .init([self.player2Knights.first!], at: .R2) |> \.comesFrom .~ [.R1]
-        ])
-        XCTAssertEqual(turnUpdateAgainEvent?.turn.pendingRollsForMove, [])
-        XCTAssertEqual(turnUpdateAgainEvent?.turn.remainRollChangeCount, 1)
+        XCTAssertEqual(turnUpdateEvent?.turn.pendingRollsForMove, [.gae: 1])
+        XCTAssertEqual(turnUpdateEvent?.turn.remainRollChanceCount, 0)
+        
+        XCTAssertEqual(turnUpdateEventAfterMove?.turn.sequeceId, 1)
+        XCTAssertEqual(turnUpdateEventAfterMove?.turn.pendingRollsForMove, [:])
+        XCTAssertEqual(turnUpdateEventAfterMove?.turn.remainRollChanceCount, 0)
+        
+        let positionKn1 = occupationUpdateEvent?.knightPositions.position(for: self.player1Knights.first!.id)
+        let positionKn2 = occupationUpdateEvent?.knightPositions.position(for: self.player2Knights.first!.id)
+        XCTAssertEqual(positionKn1?.current, .start)
+        XCTAssertEqual(positionKn2?.current, .R2)
+        XCTAssertEqual(occupationUpdateEvent?.battles.isEmpty, false)
+        
+        XCTAssertEqual(turnUpdateAgainEvent?.turn.sequeceId, 1)
+        XCTAssertEqual(turnUpdateAgainEvent?.turn.playerId, self.player2.userId)
+        XCTAssertEqual(turnUpdateAgainEvent?.turn.pendingRollsForMove, [:])
+        XCTAssertEqual(turnUpdateAgainEvent?.turn.remainRollChanceCount, 1)
     }
     
     // 선택한 경로 이동중에 상대말 있으면 잡음 -> 점령 정보에 배틀정보 있음
@@ -300,133 +333,25 @@ extension OfflineGameServiceImpleTests {
             self.service.rollDice(self.player2.userId)
             self.mockDiceRoller.mocking = .gae
             self.service.rollDice(self.player2.userId)
-            self.service.moveKnight([self.player2Knights.first!.id], at: .init(serialPaths: [
-                [.start, .R1, .R2], [.R2, .R3, .R4, .CTR, .T1]
-            ]))
+            self.service.moveKnight(
+                self.player2.userId,
+                [self.player2Knights.first!.id],
+                through: .init(serialPaths: [
+                    .init(.gae, [.start, .R1, .R2]), .init(.yut, [.R2, .R3, .R4, .CTR, .T1])
+                ])
+            )
         }
         
         // then
-        XCTAssertEqual(event?.battles, [.init(at: .R2, killed: [self.player1Knights.first!])])
-        XCTAssertEqual(event?.movemensts, [
-            .init(knights: [self.player2Knights.first!], path: .init(serialPaths: [
-                [.start, .R1, .R2], [.R2, .R3, .R4, .CTR, .T1]
-            ]))
+        XCTAssertEqual(event?.battles, [
+            .init(at: .R2, killer: [self.player2Knights.first!], killed: [self.player1Knights.first!], survived: [])
         ])
-        XCTAssertEqual(event?.knightPositions, [.init([self.player2Knights.first!], at: .T1)])
+        XCTAssertEqual(event?.movemensts.count, 2)
+        let positionK1 = event?.knightPositions.position(for: self.player1Knights.first!.id)
+        let positionK2 = event?.knightPositions.position(for: self.player2Knights.first!.id)
+        XCTAssertEqual(positionK1?.current, .start)
+        XCTAssertEqual(positionK2?.current, .T1)
     }
-    
-    // 같은편 말 합체
-    func testService_whenSameSideKnightOnDestination_mergeKnights() {
-        // given
-        self.movePlayer1KnightAtR2()
-        let expect = expectation(description: "같은 편 말이 목적지에 위치하면 합체")
-        expect.expectedFulfillmentCount = 2
-        
-        // when
-        let occupationEvent = service.gameEvents.compactMap { $0 as? NodeOccupationUpdateEvent }
-        let events = self.waitPublishedValues(expect, occupationEvent) {
-            self.mockDiceRoller.mocking = .yut
-            self.service.rollDice(self.player2.userId)
-            self.service.moveKnight([self.player2Knights.first!.id], at: .init(serialPaths: [
-                [.start, .R1, .R2, .R3, .R4]
-            ]))
-            
-            self.mockDiceRoller.mocking = .yut
-            self.service.rollDice(self.player2.userId)
-            self.service.moveKnight([self.player2Knights.last!.id], at: .init(serialPaths: [
-                [.start, .R1, .R2, .R3, .R4]
-            ]))
-        }
-        // then
-        let (event1, event2) = (events[safe: 0], events[safe: 1])
-        XCTAssertEqual(event1?.battles, [])
-        XCTAssertEqual(event1?.movemensts, [
-            .init(knights: [self.player2Knights.first!], path: .init(serialPaths: [
-                [.start, .R1, .R2, .R3, .R4]
-            ]))
-        ])
-        XCTAssertEqual(event1?.knightPositions, [
-            .init([self.player2Knights.first!], at: .R4) |> \.comesFrom .~ [.R3]
-        ])
-        XCTAssertEqual(event2?.battles, [])
-        XCTAssertEqual(event2?.movemensts, [
-            .init(knights: [self.player2Knights.last!], path: .init(serialPaths: [
-                [.start, .R1, .R2, .R3, .R4]
-            ]))
-        ])
-        XCTAssertEqual(event2?.knightPositions, [
-            .init([self.player2Knights.first!, self.player2Knights.last!], at: .R4) |> \.comesFrom .~ [.R3]
-        ])
-    }
-    
-    // 이동 경로 목적지 중에 같은편말 있으면 합체
-    func testService_whenSameSideKnightOnOneOfDestinationAtPath_mergeKnights() {
-        // given
-        self.movePlayer1KnightAtR2()
-        let expect = expectation(description: "같은 편 말이 경로상 중간목적지 중 에 위치하면 합체")
-        expect.expectedFulfillmentCount = 2
-        
-        // when
-        let occupationEvent = service.gameEvents.compactMap { $0 as? NodeOccupationUpdateEvent }
-        let events = self.waitPublishedValues(expect, occupationEvent) {
-            self.mockDiceRoller.mocking = .yut
-            self.service.rollDice(self.player2.userId)
-            self.service.moveKnight([self.player2Knights.first!.id], at: .init(serialPaths: [
-                [.start, .R1, .R2, .R3, .R4]
-            ]))
-            
-            self.mockDiceRoller.mocking = .yut
-            self.service.rollDice(self.player2.userId)
-            
-            self.mockDiceRoller.mocking = .gae
-            self.service.rollDice(self.player2.userId)
-            
-            self.service.moveKnight([self.player2Knights.last!.id], at: .init(serialPaths: [
-                [.start, .R1, .R2, .R3, .R4], [.R4, .CTR, .T1]
-            ]))
-        }
-        // then
-        let (event1, event2) = (events[safe: 0], events[safe: 1])
-        XCTAssertEqual(event1?.battles, [])
-        XCTAssertEqual(event1?.movemensts, [
-            .init(knights: [self.player2Knights.first!], path: .init(serialPaths: [
-                [.start, .R1, .R2, .R3, .R4]
-            ]))
-        ])
-        XCTAssertEqual(event1?.knightPositions, [
-            .init([self.player2Knights.first!], at: .R4) |> \.comesFrom .~ [.R3]
-        ])
-        XCTAssertEqual(event2?.battles, [])
-        XCTAssertEqual(event2?.movemensts, [
-            .init(knights: [self.player2Knights.last!], path: .init(serialPaths: [
-                [.start, .R1, .R2, .R3, .R4]
-            ])),
-            .init(knights: [self.player2Knights.first!, self.player2Knights.last!], path: .init(serialPaths: [
-                [.R4, .CTR, .T1]
-            ]))
-        ])
-        XCTAssertEqual(event2?.knightPositions, [
-            .init([self.player2Knights.first!, self.player2Knights.last!], at: .R4) |> \.comesFrom .~ [.R3]
-        ])
-    }
-    
-    // TODO: 세부 싸움 정책 테스트 -> knight
-    
-    // 공격말 vs 공격말 -> 공격한쪽이 이김
-    
-    // 공격말 vs [공격말] -> 공격한쪽이 이김
-    
-    // 수비말 vs 공격말 -> 수비말이 이김
-    
-    // 수비말 vs [공격말] -> 수비말이 이김
-    
-    // 수비말 vs 수비말 -> 공격한쪽이 이김
-    
-    // 수비말 vs [수비 + 공격말] -> 수비말만 죽음
-    
-    // 공격말은 잡은 수 x 10 만큼 점수를 획득
-    
-    // 수비말은 잡은 수 x 15 만큼 점수를 획득
 }
 
 extension OfflineGameServiceImpleTests {
@@ -480,5 +405,12 @@ private extension OfflineGameServiceImpleTests {
         func roll() -> BinaryDice {
             return self.mocking
         }
+    }
+}
+
+private extension Array where Element == KnightPosition {
+    
+    func position(for knightId: String) -> KnightPosition? {
+        return self.first(where: { $0.knight.contains(where: { $0.id == knightId })})
     }
 }

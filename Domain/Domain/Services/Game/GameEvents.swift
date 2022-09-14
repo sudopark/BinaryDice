@@ -13,6 +13,7 @@ public protocol GameEvent: Sendable { }
 public struct GameStartEvent: GameEvent {
     public let info: GameInfo
     public let firstPlayerId: String
+    public let positions: [KnightPosition]
 }
 
 public struct GameTurnChangeEvent: GameEvent {
@@ -26,17 +27,7 @@ public struct RollDiceEvent: GameEvent {
 
 public struct NodeOccupationUpdateEvent: GameEvent {
     
-    public struct Movement: Equatable, Sendable {
-        public let knights: Knights
-        public let path: KnightMovePath
-    }
-    
-    public struct Battle: Equatable, Sendable {
-        public let at: Node
-        public let killed: Knights
-    }
-    
-    public let movemensts: [Movement]
+    public let movemensts: [KnightMovement]
     public let battles: [Battle]
     public let knightPositions: [KnightPosition]
 }

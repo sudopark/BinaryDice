@@ -12,12 +12,27 @@ import Extensions
 
 public struct KnightMovePath: Equatable, Sendable {
     
-    public typealias PathPerDice = [Node]
+    public struct PathPerDice: Equatable, Sendable {
+        public let dice: BinaryDice
+        public let nodes: [Node]
+        
+        init(_ dice: BinaryDice, _ nodes: [Node]) {
+            self.dice = dice
+            self.nodes = nodes
+        }
+        
+        subscript(_ index: Int) -> Node {
+            return self.nodes[index]
+        }
+    }
     
     public let serialPaths: [PathPerDice]
     
+    public var start: Node? {
+        return self.serialPaths.first?.nodes.first
+    }
     public var destination: Node? {
-        return self.serialPaths.flatMap { $0 }.last
+        return self.serialPaths.last?.nodes.last
     }
 }
 
@@ -60,11 +75,11 @@ extension KnightPathSuggestServiceImple {
         
         let asPreviousPointToPath: (Node) -> KnightMovePath.PathPerDice = { node in
             switch node {
-            case .start: return [current, .CBR]
-            default: return [current, node]
+            case .start: return .init(.doe(isBackward: true), [current, .CBR])
+            default: return .init(.doe(isBackward: true), [current, node])
             }
         }
-        return comesFrom?.map(asPreviousPointToPath) ?? [ [current] ]
+        return comesFrom?.map(asPreviousPointToPath) ?? [ .init(.doe(isBackward: true), [current]) ]
     }
 }
 
@@ -98,7 +113,7 @@ extension KnightPathSuggestServiceImple {
             switch dice {
             case .doe(isBackward: true):
                 let appendNextPath: (KnightMovePath) -> [KnightMovePath] = { path in
-                    let currentNode = path.serialPaths.last?.last ?? position.current
+                    let currentNode = path.destination ?? position.current
                     let comeFrom = path.serialPaths.comesFrom.map { Set([$0]) } ?? position.comesFrom
                     let nexts = self.findBackwardPath(currentNode, comeFrom)
                     return nexts.map { .init(serialPaths: path.serialPaths + [$0]) }
@@ -106,10 +121,9 @@ extension KnightPathSuggestServiceImple {
                 return acc.flatMap(appendNextPath)
                 
             default:
-                let step = abs(dice.numberOfMove)
                 let appendNextPath: (KnightMovePath) -> KnightMovePath = { path in
-                    let currentNode = path.serialPaths.last?.last ?? position.current
-                    let next = self.findAttackerNextNode(currentNode, step: step)
+                    let currentNode = path.destination ?? position.current
+                    let next = self.findAttackerNextNode(currentNode, dice: dice)
                     return .init(serialPaths: path.serialPaths + [next])
                 }
                 return acc.map(appendNextPath)
@@ -120,7 +134,8 @@ extension KnightPathSuggestServiceImple {
         return serializedDices.reduce([initialPath], asSerialPaths)
     }
     
-    private func findAttackerNextNode(_ from: Node, step: Int) -> KnightMovePath.PathPerDice {
+    private func findAttackerNextNode(_ from: Node, dice: BinaryDice) -> KnightMovePath.PathPerDice {
+        let step = abs(dice.numberOfMove)
         var (remain, nodes) = (step, [from])
         while remain > 0 {
             
@@ -128,12 +143,12 @@ extension KnightPathSuggestServiceImple {
             
             guard let next = self.chooseAttackNextNode(previous, current, isFirst)
             else {
-                return nodes
+                return .init(dice, nodes)
             }
             nodes.append(next)
             remain -= 1
         }
-        return nodes
+        return .init(dice, nodes)
     }
     
     private func chooseAttackNextNode(_ previous: Node?, _ current: Node, _ isFirstStep: Bool) -> Node? {
@@ -203,7 +218,7 @@ extension KnightPathSuggestServiceImple {
             switch dice {
             case .doe(isBackward: true):
                 let appendNextPath: (KnightMovePath) -> [KnightMovePath] = { path in
-                    let currentNode = path.serialPaths.last?.last ?? position.current
+                    let currentNode = path.destination ?? position.current
                     let comeFrom = path.serialPaths.comesFrom.map { [$0] } ?? position.comesFrom
                     let nexts = self.findBackwardPath(currentNode, comeFrom)
                     return nexts.map { .init(serialPaths: path.serialPaths + [$0]) }
@@ -211,10 +226,9 @@ extension KnightPathSuggestServiceImple {
                 return acc.flatMap(appendNextPath)
 
             default:
-                let step = abs(dice.numberOfMove)
                 let appendNextPath: (KnightMovePath) -> [KnightMovePath] = { path in
-                    let currentNode = path.serialPaths.last?.last ?? position.current
-                    let nexts = self.findDefenderNextNode(currentNode, step: step)
+                    let currentNode = path.destination ?? position.current
+                    let nexts = self.findDefenderNextNode(currentNode, dice: dice)
                     return nexts.map { .init(serialPaths: path.serialPaths + [$0]) }
                 }
                 return acc.flatMap(appendNextPath)
@@ -224,13 +238,14 @@ extension KnightPathSuggestServiceImple {
         return serializedDices.reduce([initialPath], asSerialPath)
     }
     
-    private func findDefenderNextNode(_ from: Node, step: Int) -> [PathPerDice] {
+    private func findDefenderNextNode(_ from: Node, dice: BinaryDice) -> [PathPerDice] {
+        let step = abs(dice.numberOfMove)
         var (remain, paths) = (step, [[from]])
         while remain > 0 {
             
             let isFirst = remain == step
             
-            let appendAvailNextNodes: (PathPerDice) -> [PathPerDice] = { path in
+            let appendAvailNextNodes: ([Node]) -> [[Node]] = { path in
                 let (previous, current) = (path[safe: path.count-2], path.last!)
                 guard let nexts = self.chooseDefenderNextNode(previous, current, isFirst)
                 else {
@@ -242,7 +257,7 @@ extension KnightPathSuggestServiceImple {
             
             remain -= 1
         }
-        return paths
+        return paths.map { .init(dice, $0) }
     }
     
     private func chooseDefenderNextNode(_ previous: Node?, _ current: Node, _ isFirstStep: Bool) -> [Node]? {
@@ -294,12 +309,12 @@ private extension Array where Element == KnightMovePath.PathPerDice {
     
     var comesFrom: Node? {
         guard let last = self.last else { return nil }
-        return last[safe: last.count-2]
+        return last.nodes[safe: last.nodes.count-2]
     }
     
     func appendNext(_ node: Node) -> Array {
         return self.map { path -> KnightMovePath.PathPerDice in
-            return path + [node]
+            return .init(path.dice, path.nodes + [node])
         }
     }
 }
