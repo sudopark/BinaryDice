@@ -34,9 +34,9 @@ extension KnightPathSuggestServiceImpleTests_attack {
         let pathFromCTL = await service.suggestPath(at: pointCTL, with: [.doe(isBackward: false)])
         
         // then
-        XCTAssertEqual(pathFromCTR, [.init(serialPaths: [ [.CTR, .DL1] ])])
-        XCTAssertEqual(pathFromCTL, [.init(serialPaths: [ [.CTL, .DR1] ])])
-        XCTAssertEqual(pathFromINT, [.init(serialPaths: [ [.INT, .DR3] ])])
+        XCTAssertEqual(pathFromCTR, [.init(serialPaths: [ .init(.doe(isBackward: false), [.CTR, .DL1]) ])])
+        XCTAssertEqual(pathFromCTL, [.init(serialPaths: [ .init(.doe(isBackward: false), [.CTL, .DR1]) ])])
+        XCTAssertEqual(pathFromINT, [.init(serialPaths: [ .init(.doe(isBackward: false), [.INT, .DR3]) ])])
     }
     
     func testService_whenDestinationIsNotShortPathPoint_suggestNotShortPath() async {
@@ -53,9 +53,9 @@ extension KnightPathSuggestServiceImpleTests_attack {
         let pathFromT4 = await service.suggestPath(at: pointT4, with: [.gae])
         
         // then
-        XCTAssertEqual(pathFromR4, [.init(serialPaths: [ [.R4, .CTR, .T1] ])])
-        XCTAssertEqual(pathFromDL2, [.init(serialPaths: [ [.DL2, .INT, .DL3] ])])
-        XCTAssertEqual(pathFromT4, [.init(serialPaths: [ [.T4, .CTL, .L1] ])])
+        XCTAssertEqual(pathFromR4, [.init(serialPaths: [ .init(.gae, [.R4, .CTR, .T1]) ])])
+        XCTAssertEqual(pathFromDL2, [.init(serialPaths: [ .init(.gae, [.DL2, .INT, .DL3]) ])])
+        XCTAssertEqual(pathFromT4, [.init(serialPaths: [ .init(.gae, [.T4, .CTL, .L1]) ])])
     }
     
     func testService_whenTwoDices_suggestPathsWithPermutation() async {
@@ -66,8 +66,12 @@ extension KnightPathSuggestServiceImpleTests_attack {
         let paths = await service.suggestPath(at: pointStart, with: [.gae, .gul])
         
         // then
-        let pathGaeGul = KnightMovePath(serialPaths: [ [.start, .R1, .R2], [.R2, .R3, .R4, .CTR] ])
-        let pathGulGae = KnightMovePath(serialPaths: [ [.start, .R1, .R2, .R3], [.R3, .R4, .CTR] ])
+        let pathGaeGul = KnightMovePath(serialPaths: [
+            .init(.gae, [.start, .R1, .R2]), .init(.gul, [.R2, .R3, .R4, .CTR])
+        ])
+        let pathGulGae = KnightMovePath(serialPaths: [
+            .init(.gul, [.start, .R1, .R2, .R3]),  .init(.gae, [.R3, .R4, .CTR])
+        ])
         XCTAssertEqual(paths.count, 2)
         XCTAssertEqual(paths.contains(pathGaeGul), true)
         XCTAssertEqual(paths.contains(pathGulGae), true)
@@ -83,19 +87,19 @@ extension KnightPathSuggestServiceImpleTests_attack {
         // then
         let visitNodes = movePaths.map { $0.serialPaths }
         XCTAssertEqual(visitNodes, [
-            [ [.start, .R1] ],
-            [ [.R1, .R2] ],
-            [ [.R2, .R3] ],
-            [ [.R3, .R4] ],
-            [ [.R4, .CTR] ],
-            [ [.CTR, .DL1] ],
-            [ [.DL1, .DL2] ],
-            [ [.DL2, .INT] ],
-            [ [.INT, .DR3] ],
-            [ [.DR3, .DR4] ],
-            [ [.DR4, .CBR] ],
-            [ [.CBR, .out] ],
-            [ [.out] ]
+            [ .init(.doe(isBackward: false), [.start, .R1]) ],
+            [ .init(.doe(isBackward: false), [.R1, .R2]) ],
+            [ .init(.doe(isBackward: false), [.R2, .R3]) ],
+            [ .init(.doe(isBackward: false), [.R3, .R4]) ],
+            [ .init(.doe(isBackward: false), [.R4, .CTR]) ],
+            [ .init(.doe(isBackward: false), [.CTR, .DL1]) ],
+            [ .init(.doe(isBackward: false), [.DL1, .DL2]) ],
+            [ .init(.doe(isBackward: false), [.DL2, .INT]) ],
+            [ .init(.doe(isBackward: false), [.INT, .DR3]) ],
+            [ .init(.doe(isBackward: false), [.DR3, .DR4]) ],
+            [ .init(.doe(isBackward: false), [.DR4, .CBR]) ],
+            [ .init(.doe(isBackward: false), [.CBR, .out]) ],
+            [ .init(.doe(isBackward: false), [.out]) ]
         ])
     }
     
@@ -111,13 +115,13 @@ extension KnightPathSuggestServiceImpleTests_attack {
         // then
         let visitNodes = movePaths.map { $0.serialPaths }
         XCTAssertEqual(visitNodes, [
-            [ [.start, .R1, .R2, .R3, .R4] ],
-            [ [.R4, .CTR, .T1] ],
-            [ [.T1, .T2, .T3, .T4] ],
-            [ [.T4, .CTL] ],
-            [ [.CTL, .DR1, .DR2, .INT, .DR3] ],
-            [ [.DR3, .DR4, .CBR] ],
-            [ [.CBR, .out] ]
+            [ .init(.yut, [.start, .R1, .R2, .R3, .R4]) ],
+            [ .init(.gae, [.R4, .CTR, .T1]) ],
+            [ .init(.gul, [.T1, .T2, .T3, .T4]) ],
+            [ .init(.doe(isBackward: false), [.T4, .CTL]) ],
+            [ .init(.yut, [.CTL, .DR1, .DR2, .INT, .DR3]) ],
+            [ .init(.gae, [.DR3, .DR4, .CBR]) ],
+            [ .init(.gul, [.CBR, .out]) ]
         ])
     }
     
@@ -133,10 +137,10 @@ extension KnightPathSuggestServiceImpleTests_attack {
         // then
         let visitNodes = movePaths.map { $0.serialPaths }
         XCTAssertEqual(visitNodes, [
-            [ [.start, .R1, .R2, .R3, .R4, .CTR] ],
-            [ [.CTR, .DL1, .DL2, .INT, .DL3] ],
-            [ [.DL3, .DL4, .CBL, .B1, .B2] ],
-            [ [.B2, .B3, .B4, .CBR, .out] ]
+            [ .init(.mo, [.start, .R1, .R2, .R3, .R4, .CTR]) ],
+            [ .init(.yut, [.CTR, .DL1, .DL2, .INT, .DL3]) ],
+            [ .init(.yut, [.DL3, .DL4, .CBL, .B1, .B2]) ],
+            [ .init(.mo, [.B2, .B3, .B4, .CBR, .out]) ]
         ])
     }
     
@@ -152,12 +156,12 @@ extension KnightPathSuggestServiceImpleTests_attack {
         // then
         let visitNodes = movePaths.map { $0.serialPaths }
         XCTAssertEqual(visitNodes, [
-            [ [.start, .R1, .R2, .R3, .R4] ],
-            [ [.R4, .CTR, .T1, .T2, .T3] ],
-            [ [.T3, .T4, .CTL, .L1, .L2] ],
-            [ [.L2, .L3, .L4, .CBL, .B1] ],
-            [ [.B1, .B2, .B3, .B4, .CBR] ],
-            [ [.CBR, .out] ]
+            [ .init(.yut, [.start, .R1, .R2, .R3, .R4]) ],
+            [ .init(.yut, [.R4, .CTR, .T1, .T2, .T3]) ],
+            [ .init(.yut, [.T3, .T4, .CTL, .L1, .L2]) ],
+            [ .init(.yut, [.L2, .L3, .L4, .CBL, .B1]) ],
+            [ .init(.yut, [.B1, .B2, .B3, .B4, .CBR]) ],
+            [ .init(.doe(isBackward: false), [.CBR, .out]) ]
         ])
     }
 }
@@ -174,7 +178,7 @@ extension KnightPathSuggestServiceImpleTests_attack {
         // then
         let visitNodes = paths.map { $0.serialPaths }
         XCTAssertEqual(visitNodes, [
-            [[.start]]
+            [.init(.doe(isBackward: true), [.start])]
         ])
     }
     
@@ -189,7 +193,7 @@ extension KnightPathSuggestServiceImpleTests_attack {
         // then
         let nodes = paths.map { $0.serialPaths }
         XCTAssertEqual(nodes, [
-            [ [.INT, .DL2] ]
+            [ .init(.doe(isBackward: true), [.INT, .DL2]) ]
         ])
     }
     
@@ -204,7 +208,7 @@ extension KnightPathSuggestServiceImpleTests_attack {
         // then
         let nodes = paths.map { $0.serialPaths }
         XCTAssertEqual(nodes, [
-            [ [.INT, .DR2] ]
+            [ .init(.doe(isBackward: true), [.INT, .DR2]) ]
         ])
     }
     
@@ -217,8 +221,8 @@ extension KnightPathSuggestServiceImpleTests_attack {
         let paths = await service.suggestPath(at: position, with: [.doe(isBackward: true)])
         
         // then
-        let pathToDL2 = KnightMovePath(serialPaths: [ [.INT, .DL2] ])
-        let pathToDR2 = KnightMovePath(serialPaths: [ [.INT, .DR2] ])
+        let pathToDL2 = KnightMovePath(serialPaths: [ .init(.doe(isBackward: true), [.INT, .DL2]) ])
+        let pathToDR2 = KnightMovePath(serialPaths: [ .init(.doe(isBackward: true), [.INT, .DR2]) ])
         XCTAssertEqual(paths.count, 2)
         XCTAssertEqual(paths.contains(pathToDL2), true)
         XCTAssertEqual(paths.contains(pathToDR2), true)
@@ -235,7 +239,7 @@ extension KnightPathSuggestServiceImpleTests_attack {
         // then
         let nodes = paths.map { $0.serialPaths }
         XCTAssertEqual(nodes, [
-            [ [.CBL, .DL4] ]
+            [ .init(.doe(isBackward: true), [.CBL, .DL4]) ]
         ])
     }
     
@@ -250,7 +254,7 @@ extension KnightPathSuggestServiceImpleTests_attack {
         // then
         let nodes = paths.map { $0.serialPaths }
         XCTAssertEqual(nodes, [
-            [ [.CBL, .L4] ]
+            [ .init(.doe(isBackward: true), [.CBL, .L4]) ]
         ])
     }
     
@@ -263,8 +267,8 @@ extension KnightPathSuggestServiceImpleTests_attack {
         let paths = await service.suggestPath(at: position, with: [.doe(isBackward: true)])
         
         // then
-        let pathToDL4 = KnightMovePath(serialPaths: [ [.CBL, .DL4] ])
-        let pathToL4 = KnightMovePath(serialPaths: [ [.CBL, .L4] ])
+        let pathToDL4 = KnightMovePath(serialPaths: [ .init(.doe(isBackward: true), [.CBL, .DL4]) ])
+        let pathToL4 = KnightMovePath(serialPaths: [ .init(.doe(isBackward: true), [.CBL, .L4]) ])
         XCTAssertEqual(paths.count, 2)
         XCTAssertEqual(paths.contains(pathToDL4), true)
         XCTAssertEqual(paths.contains(pathToL4), true)
@@ -288,9 +292,9 @@ extension KnightPathSuggestServiceImpleTests_attack {
         // then
         let visitNodes = paths.map { $0.serialPaths }
         XCTAssertEqual(visitNodes, [
-            [ [.start, .R1] ],
-            [ [.R1, .CBR] ],
-            [ [.CBR, .out] ]
+            [ .init(.doe(isBackward: false), [.start, .R1]) ],
+            [ .init(.doe(isBackward: true), [.R1, .CBR]) ],
+            [ .init(.gae, [.CBR, .out]) ]
         ])
     }
     
@@ -312,9 +316,9 @@ extension KnightPathSuggestServiceImpleTests_attack {
         // then
         let visitNodes = paths.map { $0.serialPaths }
         XCTAssertEqual(visitNodes, [
-            [ [.start, .R1] ],
-            [ [.R1, .CBR] ],
-            [ [.CBR, .R1] ]
+            [ .init(.doe(isBackward: false), [.start, .R1]) ],
+            [ .init(.doe(isBackward: true), [.R1, .CBR]) ],
+            [ .init(.doe(isBackward: true), [.CBR, .R1]) ]
         ])
     }
     
@@ -331,10 +335,10 @@ extension KnightPathSuggestServiceImpleTests_attack {
         
         // then
         let pathToMoveAndBack = KnightMovePath(serialPaths: [
-            [.T1, .T2, .T3, .T4, .CTL, .L1], [.L1, .CTL]
+            .init(.mo, [.T1, .T2, .T3, .T4, .CTL, .L1]), .init(.doe(isBackward: true), [.L1, .CTL])
         ])
         let pathBackAndMove = KnightMovePath(serialPaths: [
-            [.T1, .CTR], [.CTR, .DL1, .DL2, .INT, .DL3, .DL4]
+            .init(.doe(isBackward: true), [.T1, .CTR]), .init(.mo, [.CTR, .DL1, .DL2, .INT, .DL3, .DL4])
         ])
         XCTAssertEqual(paths.count, 2)
         XCTAssertEqual(paths.contains(pathToMoveAndBack), true)
@@ -354,13 +358,13 @@ extension KnightPathSuggestServiceImpleTests_attack {
         
         // then
         let pathMoveAndBack = KnightMovePath(serialPaths: [
-            [.INT, .DR3, .DR4], [.DR4, .DR3]
+            .init(.gae, [.INT, .DR3, .DR4]), .init(.doe(isBackward: true), [.DR4, .DR3])
         ])
         let pathBackToDLAndMove = KnightMovePath(serialPaths: [
-            [.INT, .DL2], [.DL2, .INT, .DL3]
+            .init(.doe(isBackward: true), [.INT, .DL2]), .init(.gae, [.DL2, .INT, .DL3])
         ])
         let pathBackToDRAndMove = KnightMovePath(serialPaths: [
-            [.INT, .DR2], [.DR2, .INT, .DR3]
+            .init(.doe(isBackward: true), [.INT, .DR2]), .init(.gae, [.DR2, .INT, .DR3])
         ])
         XCTAssertEqual(paths.count, 3)
         XCTAssertEqual(paths.contains(pathMoveAndBack), true)

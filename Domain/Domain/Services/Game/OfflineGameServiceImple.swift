@@ -11,7 +11,7 @@ import Prelude
 import Optics
 
 
-public final class OfflineGameServiceImple: GameService {
+public final class OfflineGameServiceImple: GameService, @unchecked Sendable {
     
     private let gameInfo: GameInfo
     private let diceRoller: RandDomiceRoller
@@ -23,17 +23,29 @@ public final class OfflineGameServiceImple: GameService {
         self.gameInfo = gameInfo
         self.diceRoller = diceRoller
     }
-    
-    private struct Subjects: Sendable {
-        let events = PassthroughSubject<GameEvent, Never>()
-        let onlinePlayerIds = CurrentValueSubject<Set<String>, Never>([])
-        let currentTurn = CurrentValueSubject<GameTurn?, Never>(nil)
-    }
-    private let subject = Subjects()
+
+    private var enterPlayerIds = Set<PlayerId>()
+    private var currrentTurn: GameTurn?
+    private var battleGround: BattleGround?
+    private let events = PassthroughSubject<GameEvent, Never>()
     
     public var gameEvents: AnyPublisher<GameEvent, Never> {
-        return self.subject.events
+        return self.events
             .eraseToAnyPublisher()
+    }
+    
+    private func changeTurn(next playerId: String) {
+        let nextSeq = self.currrentTurn.map { $0.sequeceId + 1 } ?? 0
+        let newTurn = GameTurn(sequeceId: nextSeq, playerId: playerId, expireTime: .now() + 120)
+        self.currrentTurn = newTurn
+        self.events.send(GameTurnChangeEvent(turn: newTurn))
+    }
+    
+    private func updateGameTurn(_ mutating: (GameTurn) -> GameTurn ) {
+        guard let turn = self.currrentTurn else { return }
+        let newTurn = mutating(turn)
+        self.currrentTurn = newTurn
+        self.events.send(GameTurnUpdateEvent(turn: newTurn))
     }
 }
 
@@ -43,25 +55,28 @@ public final class OfflineGameServiceImple: GameService {
 extension OfflineGameServiceImple {
     
     public func enterGame(_ player: Player) {
-        let newIds = self.subject.onlinePlayerIds.value <> [player.userId]
-        self.subject.onlinePlayerIds.send(newIds)
         
-        let (isAllEnter, isGameNotStart) = (
-            newIds.count == self.gameInfo.players.count,
-            self.subject.currentTurn.value == nil
-        )
+        let newIds = self.enterPlayerIds <> [player.userId]
+        self.enterPlayerIds = newIds
+        
+        let (isAllEnter, isGameNotStart) = (newIds.count == self.gameInfo.players.count, battleGround == nil)
         guard isAllEnter, isGameNotStart else { return }
         self.startGame()
     }
     
     private func startGame() {
         guard let firstPlayerId = self.gameInfo.players.first?.userId else { return }
-        let startEvent = GameStartEvent(info: self.gameInfo, firstPlayerId: firstPlayerId)
-        self.subject.events.send(startEvent)
+        let battleGround = BattleGround(gameInfo: self.gameInfo)
+        self.battleGround = battleGround
         
-        let turn = GameTurn(sequeceId: 0, playerId: firstPlayerId, expireTime: .now() + 60_000)
-        self.subject.currentTurn.send(turn)
-        self.subject.events.send(GameTurnChangeEvent(turn: turn))
+        let startEvent = GameStartEvent(
+            info: self.gameInfo,
+            firstPlayerId: firstPlayerId,
+            positions: battleGround.knightPositions
+        )
+        self.events.send(startEvent)
+        
+        self.changeTurn(next: firstPlayerId)
     }
 }
 
@@ -71,25 +86,59 @@ extension OfflineGameServiceImple {
 extension OfflineGameServiceImple {
     
     public func rollDice(_ playerId: String) {
-        guard let currentTurn = self.subject.currentTurn.value,
+        guard self.battleGround != nil,
+              let currentTurn = self.currrentTurn,
               currentTurn.playerId == playerId,
-              currentTurn.remainRollChangeCount > 0
+              currentTurn.remainRollChanceCount > 0
         else { return }
         
         let dice = self.diceRoller.roll()
         let diceEvent = RollDiceEvent(playerId: playerId, result: dice)
-        self.subject.events.send(diceEvent)
+        self.events.send(diceEvent)
         
-        let newTurn = currentTurn
-            |> \.remainRollChangeCount -~ (dice.isRollOneMoreTime ? 0 : 1)
-            |> \.pendingRollsForMove %~ { $0 + [dice] }
-            |> \.expireTime +~ 60
-        self.subject.currentTurn.send(newTurn)
-        self.subject.events.send(GameTurnUpdateEvent(turn: newTurn))
+        self.updateGameTurn { turn in
+            turn
+                |> \.remainRollChanceCount -~ (dice.isRollOneMoreTime ? 0 : 1)
+                |> { $0.appendPendingDice(dice) }
+        }
     }
     
-    public func moveKnight(_ knightIds: [String], at path: KnightMovePath) {
+    public func moveKnight(_ playerId: String, _ knightIds: [String], through path: KnightMovePath) {
         
+        guard let result = self.battleGround?.moveKnight(knightIds, through: path),
+              let newPositions = self.battleGround?.knightPositions
+        else { return }
+        
+        let consumedDices = path.serialPaths.map { $0.dice }
+        self.updateGameTurn { turn in
+            return turn
+                |> { $0.removePendingDice(consumedDices) }
+        }
+        
+        self.events.send(NodeOccupationUpdateEvent(movemensts: result.0, battles: result.1, knightPositions: newPositions))
+        
+        // TODO: update score by result
+        self.changeOrUpdateTurn(playerId, by: result)
+    }
+    
+    private func changeOrUpdateTurn(_ currentPlayerId: String, by result: BattleGround.MoveResult) {
+        let (isKillCounter, remainDiceRollChance) = (
+            result.battles.isEmpty == false, (self.currrentTurn?.remainRollChanceCount ?? 0) > 0
+        )
+        switch (isKillCounter, remainDiceRollChance) {
+        case (true, _):
+            self.updateGameTurn { turn in
+                return turn
+                    |> \.remainRollChanceCount +~ result.battles.count
+                    |> \.expireTime +~ 60
+            }
+            
+        case (_, true): return
+            
+        default:
+            guard let counter = self.gameInfo.players.filter ({ $0.userId != currentPlayerId }).first else { return }
+            self.changeTurn(next: counter.userId)
+        }
     }
 }
 

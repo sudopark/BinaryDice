@@ -6,6 +6,8 @@
 //
 
 import Foundation
+import Prelude
+import Optics
 
 
 public struct Knight: Equatable, Sendable {
@@ -34,9 +36,17 @@ extension Knights {
         return nonDefenderCount != 0 && defenderCount != 0 ? 2 : 1
     }
     
-    func fight(with other: Knights) -> Knights {
+    func attack(to other: Knights, at node: Node) -> Battle {
         let defenders = other.filter { $0.isDefence }
-        return defenders.isEmpty ? other : defenders
+        let killed = defenders.isEmpty ? other : defenders
+        let killedIds = Set(killed.map { $0.id })
+        let surviver = other.filter { !killedIds.contains($0.id) }
+        return Battle(
+            at: node,
+            killer: self,
+            killed: killed,
+            survived: surviver
+        )
     }
 }
 
@@ -54,4 +64,24 @@ public struct KnightPosition: Equatable, Sendable {
         self.knight = knight
         self.current = current
     }
+    
+    init?(knights: Knights, from: KnightMovePath.PathPerDice) {
+        guard let dest = from.nodes.last else { return nil }
+        self.knight = knights
+        self.current = dest
+        self.comesFrom = from.nodes[safe: from.nodes.count-2].map { Set([$0]) }
+    }
+    
+    func merge(with other: KnightPosition) -> KnightPosition {
+        let newComeFrom = (self.comesFrom ?? []) <> (other.comesFrom ?? [])
+        return .init(self.knight + other.knight, at: self.current)
+            |> \.comesFrom .~ (newComeFrom.isEmpty ? nil : newComeFrom)
+    }
+}
+
+
+public struct KnightMovement: Equatable, Sendable {
+    
+    public let knights: Knights
+    public let path: KnightMovePath
 }

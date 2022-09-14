@@ -15,7 +15,7 @@ public protocol GameService: Sendable {
  
     func rollDice(_ playerId: String)
     
-    func moveKnight(_ knightIds: [String], at path: KnightMovePath)
+    func moveKnight(_ playerId: String, _ knightIds: [String], through path: KnightMovePath)
     
     func surrendGame(_ playerId: String)
     

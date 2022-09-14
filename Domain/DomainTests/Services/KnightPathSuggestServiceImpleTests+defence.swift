@@ -40,16 +40,16 @@ extension KnightPathSuggestServiceImpleTests_defence {
         
         // then
         XCTAssertEqual(pathsFromStart.count, 2)
-        XCTAssertEqual(pathsFromStart.hasPath([ [.start, .DR4, .DR3] ]), true)
-        XCTAssertEqual(pathsFromStart.hasPath([ [.start, .B4, .B3] ]), true)
+        XCTAssertEqual(pathsFromStart.hasPath([ .init(.gae, [.start, .DR4, .DR3]) ]), true)
+        XCTAssertEqual(pathsFromStart.hasPath([ .init(.gae, [.start, .B4, .B3]) ]), true)
         
         XCTAssertEqual(pathsFromCBL.count, 2)
-        XCTAssertEqual(pathsFromCBL.hasPath([ [.CBL, .DL4, .DL3] ]), true)
-        XCTAssertEqual(pathsFromCBL.hasPath([ [.CBL, .L4, .L3] ]), true)
+        XCTAssertEqual(pathsFromCBL.hasPath([ .init(.gae, [.CBL, .DL4, .DL3]) ]), true)
+        XCTAssertEqual(pathsFromCBL.hasPath([ .init(.gae, [.CBL, .L4, .L3]) ]), true)
         
         XCTAssertEqual(pathsFromINT.count, 2)
-        XCTAssertEqual(pathsFromINT.hasPath([ [.INT, .DL2, .DL1] ]), true)
-        XCTAssertEqual(pathsFromINT.hasPath([ [.INT, .DR2, .DR1] ]), true)
+        XCTAssertEqual(pathsFromINT.hasPath([ .init(.gae, [.INT, .DL2, .DL1]) ]), true)
+        XCTAssertEqual(pathsFromINT.hasPath([ .init(.gae, [.INT, .DR2, .DR1]) ]), true)
     }
     
     // 분기지점에서 복수 dice 조합(순열) 추천
@@ -64,19 +64,19 @@ extension KnightPathSuggestServiceImpleTests_defence {
         // then
         XCTAssertEqual(paths.count, 5)
         XCTAssertEqual(paths.hasPath([
-            [.start, .B4, .B3, .B2, .B1, .CBL], [.CBL, .L4, .L3]
+            .init(.mo, [.start, .B4, .B3, .B2, .B1, .CBL]), .init(.gae, [.CBL, .L4, .L3])
         ]), true)
         XCTAssertEqual(paths.hasPath([
-            [.start, .B4, .B3], [.B3, .B2, .B1, .CBL, .L4, .L3]
+            .init(.gae, [.start, .B4, .B3]), .init(.mo, [.B3, .B2, .B1, .CBL, .L4, .L3])
         ]), true)
         XCTAssertEqual(paths.hasPath([
-            [.start, .B4, .B3, .B2, .B1, .CBL], [.CBL, .DL4, .DL3]
+            .init(.mo, [.start, .B4, .B3, .B2, .B1, .CBL]), .init(.gae, [.CBL, .DL4, .DL3])
         ]), true)
         XCTAssertEqual(paths.hasPath([
-            [.start, .DR4, .DR3, .INT, .DR2, .DR1], [.DR1, .CTL, .T4]
+            .init(.mo, [.start, .DR4, .DR3, .INT, .DR2, .DR1]), .init(.gae, [.DR1, .CTL, .T4])
         ]), true)
         XCTAssertEqual(paths.hasPath([
-            [.start, .DR4, .DR3], [.DR3, .INT, .DR2, .DR1, .CTL, .T4]
+            .init(.gae, [.start, .DR4, .DR3]), .init(.mo, [.DR3, .INT, .DR2, .DR1, .CTL, .T4])
         ]), true)
     }
     
@@ -95,9 +95,9 @@ extension KnightPathSuggestServiceImpleTests_defence {
         
         // then
         XCTAssertEqual(pathsFromB1.count, 1)
-        XCTAssertEqual(pathsFromB1.hasPath([ [.B1, .CBL, .L4] ]), true)
+        XCTAssertEqual(pathsFromB1.hasPath([ .init(.gae, [.B1, .CBL, .L4]) ]), true)
         XCTAssertEqual(pathsFromCR3.count, 1)
-        XCTAssertEqual(pathsFromCR3.hasPath([ [.DR3, .INT, .DR2] ]), true)
+        XCTAssertEqual(pathsFromCR3.hasPath([ .init(.gae, [.DR3, .INT, .DR2]) ]), true)
     }
     
     // 방어경로 최단경로 추천: START -> INT -> CTR -> OUT
@@ -120,16 +120,16 @@ extension KnightPathSuggestServiceImpleTests_defence {
         
         // then
         XCTAssertEqual(paths.hasPath([
-            [.start, .DR4, .DR3, .INT]
+            .init(.gul, [.start, .DR4, .DR3, .INT])
         ]), true)
         XCTAssertEqual(paths.hasPath([
-            [.INT, .DL2, .DL1, .CTR]
+            .init(.gul, [.INT, .DL2, .DL1, .CTR])
         ]), true)
         XCTAssertEqual(paths.hasPath([
-            [.CTR, .R4, .R3, .R2, .R1, .CBR]
+            .init(.mo, [.CTR, .R4, .R3, .R2, .R1, .CBR])
         ]), true)
         XCTAssertEqual(paths.hasPath([
-            [.CBR, .out]
+            .init(.doe(isBackward: false), [.CBR, .out])
         ]), true)
     }
     
@@ -153,16 +153,16 @@ extension KnightPathSuggestServiceImpleTests_defence {
         
         // then
         XCTAssertEqual(paths.hasPath([
-            [.start, .DR4, .DR3, .INT, .DR2, .DR1]
+            .init(.mo, [.start, .DR4, .DR3, .INT, .DR2, .DR1])
         ]), true)
         XCTAssertEqual(paths.hasPath([
-            [.DR1, .CTL, .T4, .T3, .T2, .T1]
+            .init(.mo, [.DR1, .CTL, .T4, .T3, .T2, .T1])
         ]), true)
         XCTAssertEqual(paths.hasPath([
-            [.T1, .CTR, .R4, .R3, .R2, .R1]
+            .init(.mo, [.T1, .CTR, .R4, .R3, .R2, .R1])
         ]), true)
         XCTAssertEqual(paths.hasPath([
-            [.R1, .CBR, .out]
+            .init(.gae, [.R1, .CBR, .out])
         ]), true)
     }
     
@@ -185,16 +185,16 @@ extension KnightPathSuggestServiceImpleTests_defence {
         
         // then
         XCTAssertEqual(paths.hasPath([
-            [.start, .B4, .B3, .B2, .B1, .CBL]
+            .init(.mo, [.start, .B4, .B3, .B2, .B1, .CBL])
         ]), true)
         XCTAssertEqual(paths.hasPath([
-            [.CBL, .DL4, .DL3, .INT, .DL2, .DL1]
+            .init(.mo, [.CBL, .DL4, .DL3, .INT, .DL2, .DL1])
         ]), true)
         XCTAssertEqual(paths.hasPath([
-            [.DL1, .CTR, .R4, .R3, .R2, .R1]
+            .init(.mo, [.DL1, .CTR, .R4, .R3, .R2, .R1])
         ]), true)
         XCTAssertEqual(paths.hasPath([
-            [.R1, .CBR, .out]
+            .init(.gae, [.R1, .CBR, .out])
         ]), true)
     }
     
@@ -224,22 +224,22 @@ extension KnightPathSuggestServiceImpleTests_defence {
         
         // then
         XCTAssertEqual(paths.hasPath([
-            [.start, .B4, .B3, .B2, .B1]
+            .init(.yut, [.start, .B4, .B3, .B2, .B1])
         ]), true)
         XCTAssertEqual(paths.hasPath([
-            [.B1, .CBL, .L4, .L3, .L2]
+            .init(.yut, [.B1, .CBL, .L4, .L3, .L2])
         ]), true)
         XCTAssertEqual(paths.hasPath([
-            [.L2, .L1, .CTL, .T4, .T3]
+            .init(.yut, [.L2, .L1, .CTL, .T4, .T3])
         ]), true)
         XCTAssertEqual(paths.hasPath([
-            [.T3, .T2, .T1, .CTR, .R4]
+            .init(.yut, [.T3, .T2, .T1, .CTR, .R4])
         ]), true)
         XCTAssertEqual(paths.hasPath([
-            [.R4, .R3, .R2, .R1, .CBR]
+            .init(.yut, [.R4, .R3, .R2, .R1, .CBR])
         ]), true)
         XCTAssertEqual(paths.hasPath([
-            [.CBR, .out]
+            .init(.doe(isBackward: false), [.CBR, .out])
         ]), true)
     }
 }
