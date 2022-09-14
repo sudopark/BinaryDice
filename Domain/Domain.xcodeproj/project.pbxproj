@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		F6750D4828D0D5A30034D839 /* Battle.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6750D4728D0D5A30034D839 /* Battle.swift */; };
+		F6750D4A28D23AF70034D839 /* BattleGroundTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6750D4928D23AF70034D839 /* BattleGroundTests.swift */; };
 		F6768E5828CC306C005D7264 /* ThirdParty.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6768E5728CC306C005D7264 /* ThirdParty.framework */; };
 		F6768E5C28CC6243005D7264 /* ThirdParty.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6768E5B28CC6243005D7264 /* ThirdParty.framework */; };
 		F6768E5E28CC6C82005D7264 /* KnightPathSuggestServiceImpleTests+defence.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6768E5D28CC6C82005D7264 /* KnightPathSuggestServiceImpleTests+defence.swift */; };
@@ -44,6 +45,7 @@
 
 /* Begin PBXFileReference section */
 		F6750D4728D0D5A30034D839 /* Battle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Battle.swift; sourceTree = "<group>"; };
+		F6750D4928D23AF70034D839 /* BattleGroundTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BattleGroundTests.swift; sourceTree = "<group>"; };
 		F6768E5728CC306C005D7264 /* ThirdParty.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ThirdParty.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F6768E5B28CC6243005D7264 /* ThirdParty.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ThirdParty.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F6768E5D28CC6C82005D7264 /* KnightPathSuggestServiceImpleTests+defence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KnightPathSuggestServiceImpleTests+defence.swift"; sourceTree = "<group>"; };
@@ -110,6 +112,7 @@
 				F690087728C7A93100D6CDC7 /* KnightPathSuggestServiceImpleTests+attack.swift */,
 				F6768E5D28CC6C82005D7264 /* KnightPathSuggestServiceImpleTests+defence.swift */,
 				F6AC600028CDCC3000A35B53 /* OfflineGameServiceImpleTests.swift */,
+				F6750D4928D23AF70034D839 /* BattleGroundTests.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -117,7 +120,6 @@
 		F6AC5FF928CDC8F200A35B53 /* Game */ = {
 			isa = PBXGroup;
 			children = (
-				F690BC8B28CF1590003EAEF2 /* BattleGround.swift */,
 				F6D22A2128C645190091E3C8 /* GameEvents.swift */,
 				F6F8919828CEF6DF008621D5 /* RandDomiceRoller.swift.swift */,
 				F6D22A1928C4FCDE0091E3C8 /* GameService.swift */,
@@ -173,6 +175,7 @@
 				F6D22A1328C4F7F70091E3C8 /* GameTurn.swift */,
 				F6F8919428CEF5CA008621D5 /* GameInfo.swift */,
 				F6750D4728D0D5A30034D839 /* Battle.swift */,
+				F690BC8B28CF1590003EAEF2 /* BattleGround.swift */,
 			);
 			path = "Entities+dto";
 			sourceTree = "<group>";
@@ -324,6 +327,7 @@
 				F690087828C7A93100D6CDC7 /* KnightPathSuggestServiceImpleTests+attack.swift in Sources */,
 				F6AC600128CDCC3000A35B53 /* OfflineGameServiceImpleTests.swift in Sources */,
 				F6768E6028CD890F005D7264 /* KnightPathSuggestServiceImpleTests.swift in Sources */,
+				F6750D4A28D23AF70034D839 /* BattleGroundTests.swift in Sources */,
 				F6768E5E28CC6C82005D7264 /* KnightPathSuggestServiceImpleTests+defence.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

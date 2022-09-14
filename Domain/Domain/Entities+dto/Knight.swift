@@ -28,29 +28,6 @@ public struct Knight: Equatable, Sendable {
 
 public typealias Knights = [Knight]
 
-extension Knights {
-    
-    public var remainLifeCount: Int {
-        let defenderCount = self.filter { $0.isDefence == true }.count
-        let nonDefenderCount = self.filter { $0.isDefence == false }.count
-        return nonDefenderCount != 0 && defenderCount != 0 ? 2 : 1
-    }
-    
-    func attack(to other: Knights, at node: Node) -> Battle {
-        let defenders = other.filter { $0.isDefence }
-        let killed = defenders.isEmpty ? other : defenders
-        let killedIds = Set(killed.map { $0.id })
-        let surviver = other.filter { !killedIds.contains($0.id) }
-        return Battle(
-            at: node,
-            killer: self,
-            killed: killed,
-            survived: surviver
-        )
-    }
-}
-
-
 public struct KnightPosition: Equatable, Sendable {
     
     public let knight: Knights
