@@ -75,8 +75,7 @@ extension BattleGround {
         let move = KnightMovement(knights: from.knight, path: .init(serialPaths: [path]))
         let newPosition = alliance.mergeAll(movedPosition)
         let battle = enemy.isEmpty == false
-            ? from.knight.attack(to: enemy.flatMap { $0.knight }, at: dest)
-            : nil
+            ? self.battle(at: dest, from.knight, enemy.flatMap { $0.knight }) : nil
         return (move, battle, newPosition)
     }
     
@@ -91,6 +90,19 @@ extension BattleGround {
         
         let newPositions = rearranged + [result.finalPosition] + killedResetPositions
         self.knightPositions = newPositions
+    }
+    
+    func battle(at node: Node, _ attacker: Knights, _ other: Knights) -> Battle {
+        let defenders = other.filter { $0.isDefence }
+        let killed = defenders.isEmpty ? other : defenders
+        let killedIds = Set(killed.map { $0.id })
+        let surviver = other.filter { !killedIds.contains($0.id) }
+        return Battle(
+            at: node,
+            killer: attacker,
+            killed: killed,
+            survived: surviver
+        )
     }
 }
 
