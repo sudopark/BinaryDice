@@ -26,7 +26,6 @@ struct BattleGround {
 
 extension BattleGround {
 
-    
     mutating func moveKnight(_ knightIds: [String], through path: KnightMovePath) -> MoveResult? {
         let positions = self.knightPositions
         let knightsMap = self.knightPositions.flatMap { $0.knight }
@@ -80,15 +79,11 @@ extension BattleGround {
     }
     
     private mutating func updateKnightPositions(by result: MoveResult, positions: [KnightPosition]) {
-        let (killed, movedIds) = (
-            result.battles.flatMap { b in b.killed.map { $0 } },
-            result.finalPosition.knight.map { $0.id }
-        )
-        let excludeIds = Set(killed.map { $0.id } + movedIds)
-        let rearranged = positions.compactMap { $0.exculde(excludeIds) }
-        let killedResetPositions = killed.map { KnightPosition([$0], at: .start) }
         
-        let newPositions = rearranged + [result.finalPosition] + killedResetPositions
+        let newPositions = self.knightPositions
+            .reArrangeKilledAndMoved(by: result)
+            .resetOutDefendersToStart()
+        
         self.knightPositions = newPositions
     }
     
@@ -106,11 +101,29 @@ extension BattleGround {
     }
 }
 
+extension BattleGround {
+    
+    func allKnightsOutPlayerId() -> PlayerId? {
+        let outAttackKnights = self.knightPositions.filter { $0.current == .out }
+            .flatMap { $0.knight }
+            .filter { $0.isDefence == false }
+        let playerIds = self.knightPositions.flatMap { $0.knight }.map { $0.playerId } |> Set.init
+        let outAttackKnightsPerPlayer = playerIds.reduce([PlayerId: [Knight]]()) { acc, playerId in
+            let playerKnights = outAttackKnights.filter { $0.playerId == playerId }
+            return acc |> key(playerId) %~ { ($0 ?? []) + playerKnights }
+        }
+        return outAttackKnightsPerPlayer
+            .filter { $0.value.count == 3 }
+            .map { $0.key }
+            .first
+    }
+}
+
 private extension KnightPosition {
     
     func exculde(_ knightIds: Set<String>) -> KnightPosition? {
         let remainKnights = self.knight.filter { !knightIds.contains($0.id) }
-        return remainKnights.isEmpty ? nil : .init(remainKnights, at: self.current)
+        return remainKnights.isEmpty ? nil : (.init(remainKnights, at: self.current) |> \.comesFrom .~ self.comesFrom)
     }
 }
 
@@ -119,5 +132,25 @@ private extension Array where Element == KnightPosition {
     
     func mergeAll(_ inital: KnightPosition) -> KnightPosition {
         return self.reduce(inital) { $0.merge(with: $1) }
+    }
+    
+    func reArrangeKilledAndMoved(by result: BattleGround.MoveResult) -> Array {
+        let (killed, movedIds) = (
+            result.battles.flatMap { b in b.killed.map { $0 } },
+            result.finalPosition.knight.map { $0.id }
+        )
+        let excludeIds = (killed.map { $0.id } + movedIds) |> Set.init
+        let reArranged = self.compactMap { $0.exculde(excludeIds) }
+        let killedResetPositions = killed.map { KnightPosition([$0], at: .start) }
+     
+        return reArranged + [result.finalPosition] + killedResetPositions
+    }
+    
+    func resetOutDefendersToStart() -> Array {
+        let outDefenders = self.filter { $0.current == .out }.flatMap { $0.knight }.filter { $0.isDefence }
+        let outDefenderIds = outDefenders.map { $0.id } |> Set.init
+        let outDefenderRemovedPoistions = self.compactMap { $0.exculde(outDefenderIds) }
+        let outDefenderResetPoistions = outDefenders.map { KnightPosition([$0], at: .start) }
+        return outDefenderRemovedPoistions + outDefenderResetPoistions
     }
 }

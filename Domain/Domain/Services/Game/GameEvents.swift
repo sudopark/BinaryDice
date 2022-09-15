@@ -32,10 +32,6 @@ public struct NodeOccupationUpdateEvent: GameEvent {
     public let knightPositions: [KnightPosition]
 }
 
-public struct ScoreUpdateEvent: GameEvent {
-    public let scoreMap: [PlayerId: Int]
-}
-
 public struct GameTurnUpdateEvent: GameEvent {
     public let turn: GameTurn
 }
@@ -46,5 +42,4 @@ public struct GameQuitEvent: GameEvent {
 
 public struct GameEndEvent: GameEvent {
     public let winnerId: String
-    public let finalScores: [String: Int]
 }
