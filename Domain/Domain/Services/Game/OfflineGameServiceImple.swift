@@ -105,7 +105,9 @@ extension OfflineGameServiceImple {
     
     public func moveKnight(_ playerId: String, _ knightIds: [String], through path: KnightMovePath) {
         
-        guard let result = self.battleGround?.moveKnight(knightIds, through: path),
+        guard self.currrentTurn?.playerId == playerId,
+              self.currrentTurn?.pendingRollsForMove.isEmpty == false,
+              let result = self.battleGround?.moveKnight(knightIds, through: path),
               let newPositions = self.battleGround?.knightPositions
         else { return }
         
@@ -117,23 +119,29 @@ extension OfflineGameServiceImple {
         
         self.events.send(NodeOccupationUpdateEvent(movemensts: result.0, battles: result.1, knightPositions: newPositions))
         
-        // TODO: update score by result
-        self.changeOrUpdateTurn(playerId, by: result)
+        self.checkGameIsEndOrUpdateTurn(playerId, by: result)
     }
     
-    private func changeOrUpdateTurn(_ currentPlayerId: String, by result: BattleGround.MoveResult) {
-        let (isKillCounter, remainDiceRollChance) = (
-            result.battles.isEmpty == false, (self.currrentTurn?.remainRollChanceCount ?? 0) > 0
+    private func checkGameIsEndOrUpdateTurn(_ currentPlayerId: String, by result: BattleGround.MoveResult) {
+        let (isKillCounter, remainDiceRollChance, winnerId) = (
+            result.battles.isEmpty == false,
+            (self.currrentTurn?.remainRollChanceCount ?? 0) > 0,
+            self.battleGround?.allKnightsOutPlayerId()
         )
-        switch (isKillCounter, remainDiceRollChance) {
-        case (true, _):
+        switch (isKillCounter, remainDiceRollChance, winnerId) {
+        case (_, _, let .some(playerId)):
+            self.events.send(
+                GameEndEvent(winnerId: playerId)
+            )
+            
+        case (true, _, _):
             self.updateGameTurn { turn in
                 return turn
                     |> \.remainRollChanceCount +~ result.battles.count
                     |> \.expireTime +~ 60
             }
             
-        case (_, true): return
+        case (_, true, _): return
             
         default:
             guard let counter = self.gameInfo.players.filter ({ $0.userId != currentPlayerId }).first else { return }

@@ -35,8 +35,8 @@ class OfflineGameServiceImpleTests: XCTestCase {
     
     override func setUpWithError() throws {
         self.cancellables = []
-        self.player1Knights = (0..<4).map { .init(playerId: "p:1", isDefence: $0 == 4) }
-        self.player2Knights = (0..<4).map { .init(playerId: "p:2", isDefence: $0 == 4) }
+        self.player1Knights = (0..<4).map { .init(playerId: "p:1", isDefence: $0 == 3) }
+        self.player2Knights = (0..<4).map { .init(playerId: "p:2", isDefence: $0 == 3) }
         let gameInfo = GameInfo(
             gameId: "some",
             players: [self.player1, self.player2],
@@ -352,13 +352,78 @@ extension OfflineGameServiceImpleTests {
         XCTAssertEqual(positionK1?.current, .start)
         XCTAssertEqual(positionK2?.current, .T1)
     }
+    
+    // 수비말은 out 하면 start로 다시 변경
+    func testService_whenDefenderKnightOut_returnToStartPosition() {
+        // given
+        self.setupGameStart()
+        let expect = expectation(description: "수비말은 나가면 시작지점으로 원위치")
+        
+        let serialPath = KnightMovePath(serialPaths: [
+            .init(.mo, [.start, .B4, .B3, .B2, .B1, .CBL]),
+            .init(.mo, [.CBL, .L4, .L3, .L2, .L1, .CTL]),
+            .init(.mo, [.CTL, .T4, .T3, .T2, .T1, .CTR]),
+            .init(.mo, [.R4, .R3, .R2, .R1, .CBR]),
+            .init(.gae, [.CBR, .out])
+        ])
+        
+        // when
+        let occupationEvent = self.service.gameEvents.compactMap { $0 as? NodeOccupationUpdateEvent }
+        let event = self.waitFirstPublishedValue(expect, occupationEvent) {
+            self.mockDiceRoller.mocking = .mo
+            (0..<4).forEach { _ in self.service.rollDice(self.player1.userId) }
+            self.mockDiceRoller.mocking = .gae
+            self.service.rollDice(self.player1.userId)
+            
+            self.service.moveKnight(
+                self.player1.userId,
+                [self.player1Knights.last!.id],
+                through: serialPath
+            )
+        }
+        
+        // then
+        XCTAssertEqual(event?.movemensts.count, 5)
+        let defenderPosition = event?.knightPositions.position(for: self.player1Knights.last!.id)
+        XCTAssertEqual(defenderPosition?.current, .start)
+    }
 }
 
 extension OfflineGameServiceImpleTests {
     
-    // 공격말이 모두 나가면 50 포인트 획득
-    
-    // 공격말이 모두 나가면 점수 합산해서 승자 판단
+    // 공격말 다 나가면 게임 끝남 -> 다 내보낸 이가 승자
+    func testService_whenAllAttackKnightOut_gameEndAndIsWinner() {
+        // given
+        self.setupGameStart()
+        let expect = expectation(description: "공격말이 다 나가면 게임끝나고 해당 유저가 승자")
+        let paths: [KnightMovePath.PathPerDice] = [
+            .init(.mo, [.start, .R1, .R2, .R3, .R4, .CTR]),
+            .init(.gul, [.CTR, .DL1, .DL2, .INT]),
+            .init(.yut, [.INT, .DR2, .DR3, .CBR, .out])
+        ]
+        
+        // when
+        let (skipDiceAndTurnUpdateCount, skipKnightMoveAndUpdateCount) = (3*2, 2)
+        let totalSkipCount = skipDiceAndTurnUpdateCount + skipKnightMoveAndUpdateCount
+        let events = self.waitPublishedValues(expect, self.service.gameEvents.dropFirst(totalSkipCount)) {
+            self.mockDiceRoller.mocking = .mo
+            self.service.rollDice(self.player1.userId)
+            self.mockDiceRoller.mocking = .yut
+            self.service.rollDice(self.player1.userId)
+            self.mockDiceRoller.mocking = .gul
+            self.service.rollDice(self.player1.userId)
+            
+            self.service.moveKnight(
+                self.player1.userId,
+                self.player1Knights.enumerated().filter { $0.offset < 3}.map { $0.element.id },
+                through: .init(serialPaths: paths))
+        }
+        
+        // then
+        let gameEndEvent = events.first as? GameEndEvent
+        XCTAssertEqual(events.count, 1)
+        XCTAssertEqual(gameEndEvent?.winnerId, self.player1.userId)
+    }
 }
 
 
