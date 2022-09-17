@@ -13,5 +13,8 @@
       <FileRef
          location = "group:Supports/ThirdParty/ThirdParty.xcodeproj">
       </FileRef>
+      <FileRef
+         location = "group:Supports/TestHelpKit/TestHelpKit.xcodeproj">
+      </FileRef>
    </Group>
 </Workspace>
