@@ -11,11 +11,12 @@ import Combine
 import Prelude
 import Optics
 import Extensions
+import TestHelpKit
 
 @testable import Domain
 
 
-class OfflineGameServiceImpleTests: XCTestCase {
+class OfflineGameServiceImpleTests: BaseTestCase, PublishedValueWaitAndTestable {
     
     private var player1: Player {
         return Player(userId: "p:1", nickName: "player 1")
@@ -31,7 +32,7 @@ class OfflineGameServiceImpleTests: XCTestCase {
     
     private var mockDiceRoller: MockDiceRoller!
     private var service: OfflineGameServiceImple!
-    private var cancellables: Set<AnyCancellable>!
+    public var cancellables: Set<AnyCancellable>!
     
     override func setUpWithError() throws {
         self.cancellables = []
@@ -425,41 +426,6 @@ extension OfflineGameServiceImpleTests {
         XCTAssertEqual(gameEndEvent?.winnerId, self.player1.userId)
     }
 }
-
-
-private extension OfflineGameServiceImpleTests {
-    
-    
-    func waitPublishedValues<P: Publisher>(
-        _ expect: XCTestExpectation,
-        _ publisher: P,
-        _ action: (() -> Void)? = nil
-    ) -> [P.Output] {
-        
-        var sender = [P.Output]()
-        
-        publisher
-            .sink { _ in } receiveValue: {
-                sender.append($0)
-                expect.fulfill()
-            }
-            .store(in: &self.cancellables)
-        
-        action?()
-        self.wait(for: [expect], timeout: 0.001)
-        
-        return sender
-    }
-    
-    func waitFirstPublishedValue<P: Publisher>(
-        _ expect: XCTestExpectation,
-        _ publisher: P,
-        _ action: (() -> Void)? = nil
-    ) -> P.Output? {
-        return self.waitPublishedValues(expect, publisher, action).first
-    }
-}
-
 
 private extension OfflineGameServiceImpleTests {
     

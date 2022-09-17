@@ -18,6 +18,7 @@
 		F690BC8C28CF1590003EAEF2 /* BattleGround.swift in Sources */ = {isa = PBXBuildFile; fileRef = F690BC8B28CF1590003EAEF2 /* BattleGround.swift */; };
 		F6917BE428CDCCCC00C8C4CB /* Extensions.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6917BE328CDCCCC00C8C4CB /* Extensions.framework */; };
 		F6917BE728CDCCE100C8C4CB /* Extensions.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6917BE628CDCCE100C8C4CB /* Extensions.framework */; };
+		F6A42EC928D58FEB00E5EF3A /* TestHelpKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6A42EC828D58FEB00E5EF3A /* TestHelpKit.framework */; };
 		F6AC5FF828CDC86300A35B53 /* OfflineGameServiceImple.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6AC5FF728CDC86300A35B53 /* OfflineGameServiceImple.swift */; };
 		F6AC600128CDCC3000A35B53 /* OfflineGameServiceImpleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6AC600028CDCC3000A35B53 /* OfflineGameServiceImpleTests.swift */; };
 		F6D229FF28C4F5B90091E3C8 /* Domain.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6D229F628C4F5B90091E3C8 /* Domain.framework */; };
@@ -55,6 +56,7 @@
 		F690BC8B28CF1590003EAEF2 /* BattleGround.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BattleGround.swift; sourceTree = "<group>"; };
 		F6917BE328CDCCCC00C8C4CB /* Extensions.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Extensions.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F6917BE628CDCCE100C8C4CB /* Extensions.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Extensions.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		F6A42EC828D58FEB00E5EF3A /* TestHelpKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = TestHelpKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F6AC5FF728CDC86300A35B53 /* OfflineGameServiceImple.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfflineGameServiceImple.swift; sourceTree = "<group>"; };
 		F6AC600028CDCC3000A35B53 /* OfflineGameServiceImpleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfflineGameServiceImpleTests.swift; sourceTree = "<group>"; };
 		F6D229F628C4F5B90091E3C8 /* Domain.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Domain.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -85,6 +87,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F6A42EC928D58FEB00E5EF3A /* TestHelpKit.framework in Frameworks */,
 				F6917BE728CDCCE100C8C4CB /* Extensions.framework in Frameworks */,
 				F6768E5C28CC6243005D7264 /* ThirdParty.framework in Frameworks */,
 				F6D229FF28C4F5B90091E3C8 /* Domain.framework in Frameworks */,
@@ -97,6 +100,7 @@
 		F6768E5628CC306C005D7264 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				F6A42EC828D58FEB00E5EF3A /* TestHelpKit.framework */,
 				F6917BE628CDCCE100C8C4CB /* Extensions.framework */,
 				F6917BE328CDCCCC00C8C4CB /* Extensions.framework */,
 				F6768E5B28CC6243005D7264 /* ThirdParty.framework */,
