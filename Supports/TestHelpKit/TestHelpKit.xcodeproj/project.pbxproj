@@ -14,7 +14,6 @@
 		F6A42EC128D58DF400E5EF3A /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6A42EC028D58DF400E5EF3A /* XCTest.framework */; platformFilter = ios; };
 		F6A42EC528D58E2700E5EF3A /* BaseTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6A42EC428D58E2700E5EF3A /* BaseTestCase.swift */; };
 		F6A42EC728D58EAA00E5EF3A /* PublishedValueWaitAndTestable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6A42EC628D58EAA00E5EF3A /* PublishedValueWaitAndTestable.swift */; };
-		F6A42ECB28D59B4600E5EF3A /* PublishedValueWaitAndTestable+Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6A42ECA28D59B4600E5EF3A /* PublishedValueWaitAndTestable+Tests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -36,8 +35,6 @@
 		F6A42EC028D58DF400E5EF3A /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Platforms/iPhoneOS.platform/Developer/Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		F6A42EC428D58E2700E5EF3A /* BaseTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseTestCase.swift; sourceTree = "<group>"; };
 		F6A42EC628D58EAA00E5EF3A /* PublishedValueWaitAndTestable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublishedValueWaitAndTestable.swift; sourceTree = "<group>"; };
-		F6A42ECA28D59B4600E5EF3A /* PublishedValueWaitAndTestable+Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PublishedValueWaitAndTestable+Tests.swift"; sourceTree = "<group>"; };
-		F6A42ECC28D5A1A300E5EF3A /* Extensions.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Extensions.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -94,7 +91,6 @@
 			isa = PBXGroup;
 			children = (
 				F6A42EB028D58D5D00E5EF3A /* TestHelpKitTests.swift */,
-				F6A42ECA28D59B4600E5EF3A /* PublishedValueWaitAndTestable+Tests.swift */,
 			);
 			path = TestHelpKitTests;
 			sourceTree = "<group>";
@@ -102,7 +98,6 @@
 		F6A42EBB28D58DED00E5EF3A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				F6A42ECC28D5A1A300E5EF3A /* Extensions.framework */,
 				F6A42EC028D58DF400E5EF3A /* XCTest.framework */,
 				F6A42EBC28D58DED00E5EF3A /* ThirdParty.framework */,
 			);
@@ -229,7 +224,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				F6A42EB128D58D5D00E5EF3A /* TestHelpKitTests.swift in Sources */,
-				F6A42ECB28D59B4600E5EF3A /* PublishedValueWaitAndTestable+Tests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
