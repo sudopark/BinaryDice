@@ -85,7 +85,7 @@ extension OfflineGameServiceImple {
 
 extension OfflineGameServiceImple {
     
-    public func rollDice(_ playerId: String) {
+    public func rollDice(_ playerId: String) async throws {
         guard self.battleGround != nil,
               let currentTurn = self.currrentTurn,
               currentTurn.playerId == playerId,
@@ -103,7 +103,11 @@ extension OfflineGameServiceImple {
         }
     }
     
-    public func moveKnight(_ playerId: String, _ knightIds: [String], through path: KnightMovePath) {
+    public func moveKnight(
+        _ playerId: String,
+        _ knightIds: [String],
+        through path: KnightMovePath
+    ) async throws {
         
         guard self.currrentTurn?.playerId == playerId,
               self.currrentTurn?.pendingRollsForMove.isEmpty == false,
