@@ -13,9 +13,13 @@ public protocol GameService: Sendable {
  
     func enterGame(_ player: Player)
  
-    func rollDice(_ playerId: String)
+    func rollDice(_ playerId: String) async throws
     
-    func moveKnight(_ playerId: String, _ knightIds: [String], through path: KnightMovePath)
+    func moveKnight(
+        _ playerId: String,
+        _ knightIds: [String],
+        through path: KnightMovePath
+    ) async throws
     
     func surrendGame(_ playerId: String)
     

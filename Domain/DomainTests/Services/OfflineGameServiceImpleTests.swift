@@ -12,6 +12,7 @@ import Prelude
 import Optics
 import Extensions
 import TestHelpKit
+import AsyncAlgorithms
 
 @testable import Domain
 
@@ -103,7 +104,7 @@ extension OfflineGameServiceImpleTests {
         
         // when
         let event = self.waitFirstPublishedValue(expect, self.service.gameEvents) {
-            self.service.rollDice(self.player1.userId)
+            Task { try await self.service.rollDice(self.player1.userId) }
         }
         
         // then
@@ -121,7 +122,7 @@ extension OfflineGameServiceImpleTests {
         
         // when
         let event = self.waitFirstPublishedValue(expect, self.service.gameEvents) {
-            self.service.rollDice(self.player2.userId)
+            Task { try await self.service.rollDice(self.player2.userId) }
         }
         
         // then
@@ -138,7 +139,7 @@ extension OfflineGameServiceImpleTests {
         // when
         let events = self.waitPublishedValues(expect, self.service.gameEvents) {
             self.mockDiceRoller.mocking = .gul
-            self.service.rollDice(self.player1.userId)
+            Task { try await self.service.rollDice(self.player1.userId) }
         }
         
         // then
@@ -159,11 +160,13 @@ extension OfflineGameServiceImpleTests {
         
         // when
         let events = self.waitPublishedValues(expect, self.service.gameEvents) {
-            self.mockDiceRoller.mocking = .yut
-            self.service.rollDice(self.player1.userId)
-            
-            self.mockDiceRoller.mocking = .mo
-            self.service.rollDice(self.player1.userId)
+            Task {
+                self.mockDiceRoller.mocking = .yut
+                try await self.service.rollDice(self.player1.userId)
+                
+                self.mockDiceRoller.mocking = .mo
+                try await self.service.rollDice(self.player1.userId)
+            }
         }
         
         // then
@@ -189,13 +192,15 @@ extension OfflineGameServiceImpleTests {
         
         // when
         let events = self.waitPublishedValues(expect, self.service.gameEvents.dropFirst(1)) {
-            self.mockDiceRoller.mocking = .yut
-            self.service.rollDice(self.player1.userId)
-            self.service.moveKnight(
-                self.player1.userId,
-                [self.player1Knights.first!.id],
-                through: .init(serialPaths: [.init(.yut, [.start, .R1, .R2, .R3, .R4])])
-            )
+            Task {
+                self.mockDiceRoller.mocking = .yut
+                try await self.service.rollDice(self.player1.userId)
+                try await self.service.moveKnight(
+                    self.player1.userId,
+                    [self.player1Knights.first!.id],
+                    through: .init(serialPaths: [.init(.yut, [.start, .R1, .R2, .R3, .R4])])
+                )
+            }
         }
         
         // then
@@ -226,13 +231,15 @@ extension OfflineGameServiceImpleTests {
         
         // when
         let events = self.waitPublishedValues(expect, service.gameEvents.dropFirst(2)) {
-            self.mockDiceRoller.mocking = .gae
-            self.service.rollDice(self.player1.userId)
-            self.service.moveKnight(
-                self.player1.userId,
-                [self.player1Knights.first!.id],
-                through: .init(serialPaths: [.init(.gae, [.start, .R1, .R2])])
-            )
+            Task {
+                self.mockDiceRoller.mocking = .gae
+                try await self.service.rollDice(self.player1.userId)
+                try await self.service.moveKnight(
+                    self.player1.userId,
+                    [self.player1Knights.first!.id],
+                    through: .init(serialPaths: [.init(.gae, [.start, .R1, .R2])])
+                )
+            }
         }
         
         // then
@@ -262,13 +269,15 @@ extension OfflineGameServiceImpleTests {
             .filter { $0.turn.playerId == self.player2.userId }
         
         let _ = self.waitFirstPublishedValue(expect, turnChanged) {
-            self.mockDiceRoller.mocking = .gae
-            self.service.rollDice(self.player1.userId)
-            self.service.moveKnight(
-                self.player1.userId,
-                [self.player1Knights.first!.id],
-                through: .init(serialPaths: [.init(.gae, [.start, .R1, .R2])])
-            )
+            Task {
+                self.mockDiceRoller.mocking = .gae
+                try await self.service.rollDice(self.player1.userId)
+                try await self.service.moveKnight(
+                    self.player1.userId,
+                    [self.player1Knights.first!.id],
+                    through: .init(serialPaths: [.init(.gae, [.start, .R1, .R2])])
+                )
+            }
         }
     }
     
@@ -281,14 +290,16 @@ extension OfflineGameServiceImpleTests {
         
         // when
         let events = self.waitPublishedValues(expect, service.gameEvents) {
-            self.mockDiceRoller.mocking = .gae
-            self.service.rollDice(self.player2.userId)  // dice roll event + turn update event
-            
-            self.service.moveKnight(
-                self.player2.userId,
-                [self.player2Knights.first!.id],
-                through: .init(serialPaths: [.init(.gae, [.start, .R1, .R2])])
-            )   // occupation update event + turn update
+            Task {
+                self.mockDiceRoller.mocking = .gae
+                try await self.service.rollDice(self.player2.userId)  // dice roll event + turn update event
+                
+                try await self.service.moveKnight(
+                    self.player2.userId,
+                    [self.player2Knights.first!.id],
+                    through: .init(serialPaths: [.init(.gae, [.start, .R1, .R2])])
+                )   // occupation update event + turn update
+            }
         }
         
         // then
@@ -330,17 +341,19 @@ extension OfflineGameServiceImpleTests {
         // when
         let occupationEvent = service.gameEvents.compactMap { $0 as? NodeOccupationUpdateEvent }
         let event = self.waitFirstPublishedValue(expect, occupationEvent) {
-            self.mockDiceRoller.mocking = .yut
-            self.service.rollDice(self.player2.userId)
-            self.mockDiceRoller.mocking = .gae
-            self.service.rollDice(self.player2.userId)
-            self.service.moveKnight(
-                self.player2.userId,
-                [self.player2Knights.first!.id],
-                through: .init(serialPaths: [
-                    .init(.gae, [.start, .R1, .R2]), .init(.yut, [.R2, .R3, .R4, .CTR, .T1])
-                ])
-            )
+            Task {
+                self.mockDiceRoller.mocking = .yut
+                try await self.service.rollDice(self.player2.userId)
+                self.mockDiceRoller.mocking = .gae
+                try await self.service.rollDice(self.player2.userId)
+                try await self.service.moveKnight(
+                    self.player2.userId,
+                    [self.player2Knights.first!.id],
+                    through: .init(serialPaths: [
+                        .init(.gae, [.start, .R1, .R2]), .init(.yut, [.R2, .R3, .R4, .CTR, .T1])
+                    ])
+                )
+            }
         }
         
         // then
@@ -371,16 +384,20 @@ extension OfflineGameServiceImpleTests {
         // when
         let occupationEvent = self.service.gameEvents.compactMap { $0 as? NodeOccupationUpdateEvent }
         let event = self.waitFirstPublishedValue(expect, occupationEvent) {
-            self.mockDiceRoller.mocking = .mo
-            (0..<4).forEach { _ in self.service.rollDice(self.player1.userId) }
-            self.mockDiceRoller.mocking = .gae
-            self.service.rollDice(self.player1.userId)
-            
-            self.service.moveKnight(
-                self.player1.userId,
-                [self.player1Knights.last!.id],
-                through: serialPath
-            )
+            Task {
+                self.mockDiceRoller.mocking = .mo
+                for try await _ in (0..<4).async {
+                    try await self.service.rollDice(self.player1.userId)
+                }
+                self.mockDiceRoller.mocking = .gae
+                try await self.service.rollDice(self.player1.userId)
+                
+                try await self.service.moveKnight(
+                    self.player1.userId,
+                    [self.player1Knights.last!.id],
+                    through: serialPath
+                )
+            }
         }
         
         // then
@@ -407,17 +424,19 @@ extension OfflineGameServiceImpleTests {
         let (skipDiceAndTurnUpdateCount, skipKnightMoveAndUpdateCount) = (3*2, 2)
         let totalSkipCount = skipDiceAndTurnUpdateCount + skipKnightMoveAndUpdateCount
         let events = self.waitPublishedValues(expect, self.service.gameEvents.dropFirst(totalSkipCount)) {
-            self.mockDiceRoller.mocking = .mo
-            self.service.rollDice(self.player1.userId)
-            self.mockDiceRoller.mocking = .yut
-            self.service.rollDice(self.player1.userId)
-            self.mockDiceRoller.mocking = .gul
-            self.service.rollDice(self.player1.userId)
-            
-            self.service.moveKnight(
-                self.player1.userId,
-                self.player1Knights.enumerated().filter { $0.offset < 3}.map { $0.element.id },
-                through: .init(serialPaths: paths))
+            Task {
+                self.mockDiceRoller.mocking = .mo
+                try await self.service.rollDice(self.player1.userId)
+                self.mockDiceRoller.mocking = .yut
+                try await self.service.rollDice(self.player1.userId)
+                self.mockDiceRoller.mocking = .gul
+                try await self.service.rollDice(self.player1.userId)
+                
+                try await self.service.moveKnight(
+                    self.player1.userId,
+                    self.player1Knights.enumerated().filter { $0.offset < 3}.map { $0.element.id },
+                    through: .init(serialPaths: paths))
+            }
         }
         
         // then
