@@ -12,6 +12,7 @@
 		F6917BD628CDCC8A00C8C4CB /* ExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6917BD528CDCC8A00C8C4CB /* ExtensionsTests.swift */; };
 		F6917BD728CDCC8A00C8C4CB /* Extensions.h in Headers */ = {isa = PBXBuildFile; fileRef = F6917BCB28CDCC8A00C8C4CB /* Extensions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F6917BE228CDCCA600C8C4CB /* Array+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6917BE128CDCCA600C8C4CB /* Array+Extensions.swift */; };
+		F6A42ECF28D5A1B800E5EF3A /* RuntimeError.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6A42ECE28D5A1B800E5EF3A /* RuntimeError.swift */; };
 		F6F8919728CEF601008621D5 /* Time+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6F8919628CEF601008621D5 /* Time+Extensions.swift */; };
 /* End PBXBuildFile section */
 
@@ -32,6 +33,7 @@
 		F6917BD028CDCC8A00C8C4CB /* ExtensionsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ExtensionsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F6917BD528CDCC8A00C8C4CB /* ExtensionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionsTests.swift; sourceTree = "<group>"; };
 		F6917BE128CDCCA600C8C4CB /* Array+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Extensions.swift"; sourceTree = "<group>"; };
+		F6A42ECE28D5A1B800E5EF3A /* RuntimeError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuntimeError.swift; sourceTree = "<group>"; };
 		F6F8919628CEF601008621D5 /* Time+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Time+Extensions.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -95,6 +97,7 @@
 				F6917BE128CDCCA600C8C4CB /* Array+Extensions.swift */,
 				F6F8919628CEF601008621D5 /* Time+Extensions.swift */,
 				F690BC8928CEFCD7003EAEF2 /* Combine+Extensions.swift */,
+				F6A42ECE28D5A1B800E5EF3A /* RuntimeError.swift */,
 			);
 			path = "Type+Extensions";
 			sourceTree = "<group>";
@@ -212,6 +215,7 @@
 				F6F8919728CEF601008621D5 /* Time+Extensions.swift in Sources */,
 				F690BC8A28CEFCD7003EAEF2 /* Combine+Extensions.swift in Sources */,
 				F6917BE228CDCCA600C8C4CB /* Array+Extensions.swift in Sources */,
+				F6A42ECF28D5A1B800E5EF3A /* RuntimeError.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
