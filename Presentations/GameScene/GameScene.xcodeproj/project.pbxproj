@@ -11,6 +11,7 @@
 		F608615428DB5E34008D61D6 /* GameSceneTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F608615328DB5E34008D61D6 /* GameSceneTests.swift */; };
 		F608615528DB5E34008D61D6 /* GameScene.h in Headers */ = {isa = PBXBuildFile; fileRef = F608614928DB5E33008D61D6 /* GameScene.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F62295B128DB60B800577BE0 /* CommonPresentations.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F62295B028DB60B800577BE0 /* CommonPresentations.framework */; };
+		F62295B628DB616800577BE0 /* NodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F62295B528DB616800577BE0 /* NodeView.swift */; };
 		F6C5FBA528DB5ED70021BE42 /* Domain.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6C5FBA428DB5ED70021BE42 /* Domain.framework */; };
 		F6C5FBA928DB5EE00021BE42 /* Extensions.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6C5FBA828DB5EE00021BE42 /* Extensions.framework */; };
 		F6C5FBAD28DB5EE80021BE42 /* ThirdParty.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6C5FBAC28DB5EE80021BE42 /* ThirdParty.framework */; };
@@ -35,6 +36,7 @@
 		F608614E28DB5E34008D61D6 /* GameSceneTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GameSceneTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F608615328DB5E34008D61D6 /* GameSceneTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameSceneTests.swift; sourceTree = "<group>"; };
 		F62295B028DB60B800577BE0 /* CommonPresentations.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = CommonPresentations.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		F62295B528DB616800577BE0 /* NodeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeView.swift; sourceTree = "<group>"; };
 		F6C5FBA428DB5ED70021BE42 /* Domain.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Domain.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F6C5FBA828DB5EE00021BE42 /* Extensions.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Extensions.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F6C5FBAC28DB5EE80021BE42 /* ThirdParty.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ThirdParty.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -91,6 +93,7 @@
 		F608614828DB5E33008D61D6 /* GameScene */ = {
 			isa = PBXGroup;
 			children = (
+				F62295B428DB60D900577BE0 /* BattleGround */,
 				F608614928DB5E33008D61D6 /* GameScene.h */,
 			);
 			path = GameScene;
@@ -102,6 +105,14 @@
 				F608615328DB5E34008D61D6 /* GameSceneTests.swift */,
 			);
 			path = GameSceneTests;
+			sourceTree = "<group>";
+		};
+		F62295B428DB60D900577BE0 /* BattleGround */ = {
+			isa = PBXGroup;
+			children = (
+				F62295B528DB616800577BE0 /* NodeView.swift */,
+			);
+			path = BattleGround;
 			sourceTree = "<group>";
 		};
 		F6C5FBA328DB5ED70021BE42 /* Frameworks */ = {
@@ -180,6 +191,7 @@
 				TargetAttributes = {
 					F608614528DB5E33008D61D6 = {
 						CreatedOnToolsVersion = 14.0;
+						LastSwiftMigration = 1400;
 					};
 					F608614D28DB5E34008D61D6 = {
 						CreatedOnToolsVersion = 14.0;
@@ -227,6 +239,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F62295B628DB616800577BE0 /* NodeView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -372,6 +385,7 @@
 		F608615928DB5E34008D61D6 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
@@ -392,6 +406,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -400,6 +415,7 @@
 		F608615A28DB5E34008D61D6 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
@@ -428,6 +444,7 @@
 		F608615C28DB5E34008D61D6 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 2ABNASUGL6;
@@ -444,6 +461,7 @@
 		F608615D28DB5E34008D61D6 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 2ABNASUGL6;
