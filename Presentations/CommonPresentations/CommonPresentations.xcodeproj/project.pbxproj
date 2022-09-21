@@ -7,7 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F62295B928DB618300577BE0 /* BaseUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F62295B828DB618300577BE0 /* BaseUIView.swift */; };
 		F62295BC28DB61FD00577BE0 /* AutoLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = F62295BB28DB61FD00577BE0 /* AutoLayout.swift */; };
+		F62295BE28DB630F00577BE0 /* BaseUIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F62295BD28DB630F00577BE0 /* BaseUIViewController.swift */; };
 		F6C5FBC828DB5FBB0021BE42 /* CommonPresentations.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6C5FBBF28DB5FBB0021BE42 /* CommonPresentations.framework */; };
 		F6C5FBCD28DB5FBB0021BE42 /* CommonPresentationsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6C5FBCC28DB5FBB0021BE42 /* CommonPresentationsTests.swift */; };
 		F6C5FBCE28DB5FBB0021BE42 /* CommonPresentations.h in Headers */ = {isa = PBXBuildFile; fileRef = F6C5FBC228DB5FBB0021BE42 /* CommonPresentations.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -29,7 +31,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		F62295B828DB618300577BE0 /* BaseUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseUIView.swift; sourceTree = "<group>"; };
 		F62295BB28DB61FD00577BE0 /* AutoLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoLayout.swift; sourceTree = "<group>"; };
+		F62295BD28DB630F00577BE0 /* BaseUIViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseUIViewController.swift; sourceTree = "<group>"; };
 		F6C5FBBF28DB5FBB0021BE42 /* CommonPresentations.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CommonPresentations.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F6C5FBC228DB5FBB0021BE42 /* CommonPresentations.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CommonPresentations.h; sourceTree = "<group>"; };
 		F6C5FBC728DB5FBB0021BE42 /* CommonPresentationsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CommonPresentationsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -65,6 +69,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		F62295B728DB617800577BE0 /* BaseComponents */ = {
+			isa = PBXGroup;
+			children = (
+				F62295B828DB618300577BE0 /* BaseUIView.swift */,
+				F62295BD28DB630F00577BE0 /* BaseUIViewController.swift */,
+			);
+			path = BaseComponents;
+			sourceTree = "<group>";
+		};
 		F62295BA28DB61F000577BE0 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
@@ -95,6 +108,7 @@
 		F6C5FBC128DB5FBB0021BE42 /* CommonPresentations */ = {
 			isa = PBXGroup;
 			children = (
+				F62295B728DB617800577BE0 /* BaseComponents */,
 				F62295BA28DB61F000577BE0 /* Utils */,
 				F6C5FBC228DB5FBB0021BE42 /* CommonPresentations.h */,
 			);
@@ -231,7 +245,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F62295BE28DB630F00577BE0 /* BaseUIViewController.swift in Sources */,
 				F62295BC28DB61FD00577BE0 /* AutoLayout.swift in Sources */,
+				F62295B928DB618300577BE0 /* BaseUIView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
