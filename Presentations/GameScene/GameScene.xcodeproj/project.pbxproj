@@ -18,6 +18,7 @@
 		F6C5FBB128DB5EFB0021BE42 /* Extensions.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6C5FBB028DB5EFB0021BE42 /* Extensions.framework */; };
 		F6C5FBB328DB5F060021BE42 /* ThirdParty.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6C5FBB228DB5F060021BE42 /* ThirdParty.framework */; };
 		F6C5FBE728DB60560021BE42 /* TestHelpKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6C5FBE628DB60560021BE42 /* TestHelpKit.framework */; };
+		F6E4FB1228E346C9003243DA /* KnightsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E4FB1128E346C9003243DA /* KnightsView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -43,6 +44,7 @@
 		F6C5FBB028DB5EFB0021BE42 /* Extensions.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Extensions.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F6C5FBB228DB5F060021BE42 /* ThirdParty.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ThirdParty.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F6C5FBE628DB60560021BE42 /* TestHelpKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = TestHelpKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		F6E4FB1128E346C9003243DA /* KnightsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnightsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -111,6 +113,7 @@
 			isa = PBXGroup;
 			children = (
 				F62295B528DB616800577BE0 /* NodeView.swift */,
+				F6E4FB1128E346C9003243DA /* KnightsView.swift */,
 			);
 			path = BattleGround;
 			sourceTree = "<group>";
@@ -240,6 +243,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F62295B628DB616800577BE0 /* NodeView.swift in Sources */,
+				F6E4FB1228E346C9003243DA /* KnightsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
