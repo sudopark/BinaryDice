@@ -14,4 +14,8 @@ extension Array {
         guard (0..<self.count) ~= index else { return nil }
         return self[index]
     }
+    
+    public func asDictionary<K: Hashable>(_ keySelector: (Element) -> K) -> [K: Element] {
+        return self.reduce(into: [K: Element]()) { $0[keySelector($1)] = $1 }
+    }
 }

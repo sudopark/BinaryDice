@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		F620D19428F12A1B00682D90 /* GameEventBoardCaster.swift in Sources */ = {isa = PBXBuildFile; fileRef = F620D19328F12A1B00682D90 /* GameEventBoardCaster.swift */; };
+		F620D19A28F12C0500682D90 /* GameAckEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = F620D19928F12C0500682D90 /* GameAckEvents.swift */; };
+		F620D19C28F12E3000682D90 /* OfflineGameBroadCasterImple.swift in Sources */ = {isa = PBXBuildFile; fileRef = F620D19B28F12E3000682D90 /* OfflineGameBroadCasterImple.swift */; };
+		F620D1A428F145E900682D90 /* OfflineGameBroadCasterImpleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F620D1A328F145E900682D90 /* OfflineGameBroadCasterImpleTests.swift */; };
 		F6750D4828D0D5A30034D839 /* Battle.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6750D4728D0D5A30034D839 /* Battle.swift */; };
 		F6750D4A28D23AF70034D839 /* BattleGroundTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6750D4928D23AF70034D839 /* BattleGroundTests.swift */; };
 		F6768E5828CC306C005D7264 /* ThirdParty.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6768E5728CC306C005D7264 /* ThirdParty.framework */; };
@@ -47,6 +50,9 @@
 
 /* Begin PBXFileReference section */
 		F620D19328F12A1B00682D90 /* GameEventBoardCaster.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameEventBoardCaster.swift; sourceTree = "<group>"; };
+		F620D19928F12C0500682D90 /* GameAckEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameAckEvents.swift; sourceTree = "<group>"; };
+		F620D19B28F12E3000682D90 /* OfflineGameBroadCasterImple.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfflineGameBroadCasterImple.swift; sourceTree = "<group>"; };
+		F620D1A328F145E900682D90 /* OfflineGameBroadCasterImpleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfflineGameBroadCasterImpleTests.swift; sourceTree = "<group>"; };
 		F6750D4728D0D5A30034D839 /* Battle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Battle.swift; sourceTree = "<group>"; };
 		F6750D4928D23AF70034D839 /* BattleGroundTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BattleGroundTests.swift; sourceTree = "<group>"; };
 		F6768E5728CC306C005D7264 /* ThirdParty.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ThirdParty.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -103,6 +109,7 @@
 			isa = PBXGroup;
 			children = (
 				F6D22A2128C645190091E3C8 /* GameEvents.swift */,
+				F620D19928F12C0500682D90 /* GameAckEvents.swift */,
 			);
 			path = Events;
 			sourceTree = "<group>";
@@ -120,6 +127,7 @@
 			isa = PBXGroup;
 			children = (
 				F620D19328F12A1B00682D90 /* GameEventBoardCaster.swift */,
+				F620D19B28F12E3000682D90 /* OfflineGameBroadCasterImple.swift */,
 			);
 			path = BoardCaster;
 			sourceTree = "<group>";
@@ -154,6 +162,7 @@
 				F6768E5D28CC6C82005D7264 /* KnightPathSuggestServiceImpleTests+defence.swift */,
 				F6AC600028CDCC3000A35B53 /* OfflineGameServiceImpleTests.swift */,
 				F6750D4928D23AF70034D839 /* BattleGroundTests.swift */,
+				F620D1A328F145E900682D90 /* OfflineGameBroadCasterImpleTests.swift */,
 			);
 			path = Game;
 			sourceTree = "<group>";
@@ -353,9 +362,11 @@
 				F6D22A1228C4F6E00091E3C8 /* Knight.swift in Sources */,
 				F690BC8C28CF1590003EAEF2 /* BattleGround.swift in Sources */,
 				F6D22A1A28C4FCDE0091E3C8 /* GameService.swift in Sources */,
+				F620D19A28F12C0500682D90 /* GameAckEvents.swift in Sources */,
 				F6D22A1828C4FA800091E3C8 /* BinaryDice.swift in Sources */,
 				F620D19428F12A1B00682D90 /* GameEventBoardCaster.swift in Sources */,
 				F690086828C667FD00D6CDC7 /* KnightPathSuggestService.swift in Sources */,
+				F620D19C28F12E3000682D90 /* OfflineGameBroadCasterImple.swift in Sources */,
 				F6D22A1028C4F5DF0091E3C8 /* Player.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -364,6 +375,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F620D1A428F145E900682D90 /* OfflineGameBroadCasterImpleTests.swift in Sources */,
 				F690087828C7A93100D6CDC7 /* KnightPathSuggestServiceImpleTests+attack.swift in Sources */,
 				F6AC600128CDCC3000A35B53 /* OfflineGameServiceImpleTests.swift in Sources */,
 				F6768E6028CD890F005D7264 /* KnightPathSuggestServiceImpleTests.swift in Sources */,
