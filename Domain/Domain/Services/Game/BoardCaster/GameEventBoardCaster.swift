@@ -20,3 +20,10 @@ public protocol GameEventBroadCaster: AnyObject, Sendable {
     
     var gameEvents: AnyPublisher<GameEvent, Never> { get }
 }
+
+extension GameEventBroadCaster {
+    
+    func sendEvent(_ event: GameEvent) {
+        self.sendEvent(event, after: nil)
+    }
+}

@@ -33,6 +33,7 @@ class OfflineGameServiceImpleTests: BaseTestCase, PublishedValueWaitAndTestable 
     
     private var mockDiceRoller: MockDiceRoller!
     private var service: OfflineGameServiceImple!
+    private var broadCaster: AutoAckGameEventBroadCaster!
     public var cancellables: Set<AnyCancellable>!
     
     override func setUpWithError() throws {
@@ -45,7 +46,13 @@ class OfflineGameServiceImpleTests: BaseTestCase, PublishedValueWaitAndTestable 
             knights: [self.player1.userId: self.player1Knights, self.player2.userId: self.player2Knights]
         )
         self.mockDiceRoller = .init()
-        self.service = .init(gameInfo, diceRoller: mockDiceRoller)
+        self.broadCaster = AutoAckGameEventBroadCaster(players: gameInfo.players)
+        self.service = .init(
+            gameInfo,
+            diceRoller: mockDiceRoller,
+            gameEventBroadCaster: self.broadCaster
+        )
+        self.broadCaster.gameServie = self.service
     }
     
     override func tearDownWithError() throws {
@@ -54,6 +61,7 @@ class OfflineGameServiceImpleTests: BaseTestCase, PublishedValueWaitAndTestable 
         self.player1Knights = nil
         self.player2Knights = nil
         self.mockDiceRoller = nil
+        self.broadCaster = nil
         self.service = nil
     }
 }
@@ -68,7 +76,7 @@ extension OfflineGameServiceImpleTests {
         expect.expectedFulfillmentCount = 2
         
         // when
-        let events = self.waitPublishedValues(expect, self.service.gameEvents) {
+        let events = self.waitPublishedValues(expect, self.service.gameEvents.dropFirst(2)) {
             self.service.enterGame(self.player1)
             self.service.enterGame(self.player2)
         }
@@ -89,7 +97,8 @@ extension OfflineGameServiceImpleTests {
         expect.expectedFulfillmentCount = 2
         expect.assertForOverFulfill = false
         
-        let _ = self.waitPublishedValues(expect, self.service.gameEvents.prefix(2)) {
+        let excludePresenceEvent = self.service.gameEvents.filter { ($0 as? PlayerPresenceChanged) == nil }
+        let _ = self.waitPublishedValues(expect, excludePresenceEvent.prefix(2)) {
             self.service.enterGame(self.player1)
             self.service.enterGame(self.player2)
         }
@@ -344,8 +353,10 @@ extension OfflineGameServiceImpleTests {
             Task {
                 self.mockDiceRoller.mocking = .yut
                 try await self.service.rollDice(self.player2.userId)
+                
                 self.mockDiceRoller.mocking = .gae
                 try await self.service.rollDice(self.player2.userId)
+                
                 try await self.service.moveKnight(
                     self.player2.userId,
                     [self.player2Knights.first!.id],
@@ -454,6 +465,36 @@ private extension OfflineGameServiceImpleTests {
         
         func roll() -> BinaryDice {
             return self.mocking
+        }
+    }
+    
+    final class AutoAckGameEventBroadCaster: GameEventBroadCaster, @unchecked Sendable {
+        
+        private let players: [Player]
+        private let broadCaster: OfflineGameBroadCasterImple
+        weak var gameServie: OfflineGameServiceImple?
+        
+        init(players: [Player]) {
+            self.players = players
+            self.broadCaster = .init(players)
+        }
+        
+        func sendAck(_ ackEvent: Domain.GameAckEvent) {
+            self.broadCaster.sendAck(ackEvent)
+        }
+        
+        func sendEvent(_ event: GameEvent, after: GameEventAfter?) {
+            self.broadCaster.sendEvent(event, after: after)
+            
+            if case .ack(let id, _) = after {
+                self.players.forEach {
+                    self.gameServie?.ack(id, from: $0.userId)
+                }
+            }
+        }
+        
+        var gameEvents: AnyPublisher<Domain.GameEvent, Never> {
+            return self.broadCaster.gameEvents
         }
     }
 }

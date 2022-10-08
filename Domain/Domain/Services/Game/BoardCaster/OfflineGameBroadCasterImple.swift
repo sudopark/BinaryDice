@@ -25,7 +25,7 @@ public final class OfflineGameBroadCasterImple: GameEventBroadCaster, @unchecked
         let receivedAcks = CurrentValueSubject<[String: Set<PlayerId>], Never>([:])
     }
     private let subject = Subject()
-    private var delayEventSendCancellable: AnyCancellable?
+    private var cancellables: Set<AnyCancellable> = []
 }
 
 extension OfflineGameBroadCasterImple {
@@ -52,19 +52,18 @@ extension OfflineGameBroadCasterImple {
         waitTimeout: TimeInterval
     ) {
         
-        self.delayEventSendCancellable?.cancel()
-        
         let timeoutInt = Int(waitTimeout * 1000)
         
         let allAcksOrTimeout = self.allAckReceived(ackEventId)
             .timeout(.milliseconds(timeoutInt), scheduler: DispatchQueue.main)
         
-        self.delayEventSendCancellable = allAcksOrTimeout
+        allAcksOrTimeout
             .sink { [weak self] completed in
                 guard case .finished = completed else { return }
                 self?.sendEvent(event)
                 
             } receiveValue: { _ in }
+            .store(in: &self.cancellables)
     }
     
     private func allAckReceived(_ ackEventId: String) -> AnyPublisher<Void, Never> {

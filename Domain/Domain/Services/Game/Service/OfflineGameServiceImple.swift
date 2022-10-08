@@ -15,37 +15,55 @@ public final class OfflineGameServiceImple: GameService, @unchecked Sendable {
     
     private let gameInfo: GameInfo
     private let diceRoller: RandDomiceRoller
+    private let gameEventBroadCaster: GameEventBroadCaster
     
     public init(
         _ gameInfo: GameInfo,
-        diceRoller: RandDomiceRoller
+        diceRoller: RandDomiceRoller,
+        gameEventBroadCaster: GameEventBroadCaster
     ) {
         self.gameInfo = gameInfo
         self.diceRoller = diceRoller
+        self.gameEventBroadCaster = gameEventBroadCaster
     }
 
     private var enterPlayerIds = Set<PlayerId>()
     private var currrentTurn: GameTurn?
     private var battleGround: BattleGround?
-    private let events = PassthroughSubject<GameEvent, Never>()
     
     public var gameEvents: AnyPublisher<GameEvent, Never> {
-        return self.events
-            .eraseToAnyPublisher()
+        return self.gameEventBroadCaster.gameEvents
     }
     
-    private func changeTurn(next playerId: String) {
+    @discardableResult
+    private func changeTurn(next playerId: String, after previousEvent: GameEvent? = nil) -> GameTurnChangeEvent {
         let nextSeq = self.currrentTurn.map { $0.sequeceId + 1 } ?? 0
         let newTurn = GameTurn(sequeceId: nextSeq, playerId: playerId, expireTime: .now() + 120)
         self.currrentTurn = newTurn
-        self.events.send(GameTurnChangeEvent(turn: newTurn))
+        
+        let changeEvent = GameTurnChangeEvent(turn: newTurn)
+        self.sendEvent(changeEvent, after: previousEvent)
+        return changeEvent
     }
     
-    private func updateGameTurn(_ mutating: (GameTurn) -> GameTurn ) {
-        guard let turn = self.currrentTurn else { return }
+    @discardableResult
+    private func updateGameTurn(
+        after previousEvent: GameEvent? = nil,
+        _ mutating: (GameTurn) -> GameTurn
+    ) -> GameTurnUpdateEvent {
+        
+        guard let turn = self.currrentTurn else { fatalError() }
         let newTurn = mutating(turn)
         self.currrentTurn = newTurn
-        self.events.send(GameTurnUpdateEvent(turn: newTurn))
+        
+        let updateEvent = GameTurnUpdateEvent(turn: newTurn)
+        self.sendEvent(updateEvent, after: previousEvent)
+        return updateEvent
+    }
+    
+    private func sendEvent(_ event: GameEvent, after previousEvent: GameEvent? = nil) {
+        let after: GameEventAfter? = previousEvent.map { .ack($0.uuid, waitTimeout: $0.consumeTimeout) }
+        self.gameEventBroadCaster.sendEvent(event, after: after)
     }
 }
 
@@ -56,12 +74,20 @@ extension OfflineGameServiceImple {
     
     public func enterGame(_ player: Player) {
         
+        let presenceEvent = PlayerPresenceChanged(playerId: player.userId, isOn: true)
+        self.sendEvent(presenceEvent)
+        
         let newIds = self.enterPlayerIds <> [player.userId]
         self.enterPlayerIds = newIds
         
         let (isAllEnter, isGameNotStart) = (newIds.count == self.gameInfo.players.count, battleGround == nil)
         guard isAllEnter, isGameNotStart else { return }
         self.startGame()
+    }
+    
+    public func ack(_ eventId: String, from playerId: String) {
+        let ack = GameAckEvent(eventId: eventId, playerId: playerId)
+        self.gameEventBroadCaster.sendAck(ack)
     }
     
     private func startGame() {
@@ -74,9 +100,9 @@ extension OfflineGameServiceImple {
             firstPlayerId: firstPlayerId,
             positions: battleGround.knightPositions
         )
-        self.events.send(startEvent)
+        self.sendEvent(startEvent)
         
-        self.changeTurn(next: firstPlayerId)
+        self.changeTurn(next: firstPlayerId, after: startEvent)
     }
 }
 
@@ -94,7 +120,7 @@ extension OfflineGameServiceImple {
         
         let dice = self.diceRoller.roll()
         let diceEvent = RollDiceEvent(playerId: playerId, result: dice)
-        self.events.send(diceEvent)
+        self.sendEvent(diceEvent)
         
         self.updateGameTurn { turn in
             turn
@@ -116,17 +142,26 @@ extension OfflineGameServiceImple {
         else { return }
         
         let consumedDices = path.serialPaths.map { $0.dice }
-        self.updateGameTurn { turn in
+        let updateEvent = self.updateGameTurn { turn in
             return turn
                 |> { $0.removePendingDice(consumedDices) }
         }
         
-        self.events.send(NodeOccupationUpdateEvent(movemensts: result.0, battles: result.1, knightPositions: newPositions))
+        let occupationUpdateEvent = NodeOccupationUpdateEvent(
+            movemensts: result.0,
+            battles: result.1,
+            knightPositions: newPositions
+        )
+        self.sendEvent(occupationUpdateEvent, after: updateEvent)
         
-        self.checkGameIsEndOrUpdateTurn(playerId, by: result)
+        self.publishGameIsEndOrUpdateTurn(playerId, by: result, after: occupationUpdateEvent)
     }
     
-    private func checkGameIsEndOrUpdateTurn(_ currentPlayerId: String, by result: BattleGround.MoveResult) {
+    private func publishGameIsEndOrUpdateTurn(
+        _ currentPlayerId: String,
+        by result: BattleGround.MoveResult,
+        after previousEvent: GameEvent
+    ) {
         let (isKillCounter, remainDiceRollChance, winnerId) = (
             result.battles.isEmpty == false,
             (self.currrentTurn?.remainRollChanceCount ?? 0) > 0,
@@ -134,12 +169,11 @@ extension OfflineGameServiceImple {
         )
         switch (isKillCounter, remainDiceRollChance, winnerId) {
         case (_, _, let .some(playerId)):
-            self.events.send(
-                GameEndEvent(winnerId: playerId)
-            )
+            let endEvent = GameEndEvent(winnerId: playerId)
+            self.sendEvent(endEvent, after: previousEvent)
             
         case (true, _, _):
-            self.updateGameTurn { turn in
+            self.updateGameTurn(after: previousEvent) { turn in
                 return turn
                     |> \.remainRollChanceCount +~ result.battles.count
                     |> \.expireTime +~ 60
@@ -149,7 +183,7 @@ extension OfflineGameServiceImple {
             
         default:
             guard let counter = self.gameInfo.players.filter ({ $0.userId != currentPlayerId }).first else { return }
-            self.changeTurn(next: counter.userId)
+            self.changeTurn(next: counter.userId, after: previousEvent)
         }
     }
 }
@@ -165,5 +199,14 @@ extension OfflineGameServiceImple {
     
     public func quitGame(_ playerId: String) {
         
+    }
+}
+
+
+private extension GameEvent {
+    
+    var consumeTimeout: TimeInterval {
+        // TODO: 이벤트별로 정의 필요
+        return 3
     }
 }
