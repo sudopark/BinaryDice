@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F620D19428F12A1B00682D90 /* GameEventBoardCaster.swift in Sources */ = {isa = PBXBuildFile; fileRef = F620D19328F12A1B00682D90 /* GameEventBoardCaster.swift */; };
 		F6750D4828D0D5A30034D839 /* Battle.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6750D4728D0D5A30034D839 /* Battle.swift */; };
 		F6750D4A28D23AF70034D839 /* BattleGroundTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6750D4928D23AF70034D839 /* BattleGroundTests.swift */; };
 		F6768E5828CC306C005D7264 /* ThirdParty.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6768E5728CC306C005D7264 /* ThirdParty.framework */; };
@@ -45,6 +46,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		F620D19328F12A1B00682D90 /* GameEventBoardCaster.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameEventBoardCaster.swift; sourceTree = "<group>"; };
 		F6750D4728D0D5A30034D839 /* Battle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Battle.swift; sourceTree = "<group>"; };
 		F6750D4928D23AF70034D839 /* BattleGroundTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BattleGroundTests.swift; sourceTree = "<group>"; };
 		F6768E5728CC306C005D7264 /* ThirdParty.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ThirdParty.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -97,6 +99,41 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		F620D19528F12B0400682D90 /* Events */ = {
+			isa = PBXGroup;
+			children = (
+				F6D22A2128C645190091E3C8 /* GameEvents.swift */,
+			);
+			path = Events;
+			sourceTree = "<group>";
+		};
+		F620D19628F12B0C00682D90 /* Service */ = {
+			isa = PBXGroup;
+			children = (
+				F6AC5FF728CDC86300A35B53 /* OfflineGameServiceImple.swift */,
+				F6D22A1928C4FCDE0091E3C8 /* GameService.swift */,
+			);
+			path = Service;
+			sourceTree = "<group>";
+		};
+		F620D19728F12B1000682D90 /* BoardCaster */ = {
+			isa = PBXGroup;
+			children = (
+				F620D19328F12A1B00682D90 /* GameEventBoardCaster.swift */,
+			);
+			path = BoardCaster;
+			sourceTree = "<group>";
+		};
+		F620D19828F12B4200682D90 /* Support */ = {
+			isa = PBXGroup;
+			children = (
+				F690BC8B28CF1590003EAEF2 /* BattleGround.swift */,
+				F6F8919828CEF6DF008621D5 /* RandDomiceRoller.swift.swift */,
+				F690086728C667FD00D6CDC7 /* KnightPathSuggestService.swift */,
+			);
+			path = Support;
+			sourceTree = "<group>";
+		};
 		F6768E5628CC306C005D7264 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -109,7 +146,7 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		F690087628C7A91800D6CDC7 /* Services */ = {
+		F690087628C7A91800D6CDC7 /* Game */ = {
 			isa = PBXGroup;
 			children = (
 				F6768E5F28CD890F005D7264 /* KnightPathSuggestServiceImpleTests.swift */,
@@ -118,16 +155,16 @@
 				F6AC600028CDCC3000A35B53 /* OfflineGameServiceImpleTests.swift */,
 				F6750D4928D23AF70034D839 /* BattleGroundTests.swift */,
 			);
-			path = Services;
+			path = Game;
 			sourceTree = "<group>";
 		};
 		F6AC5FF928CDC8F200A35B53 /* Game */ = {
 			isa = PBXGroup;
 			children = (
-				F6D22A2128C645190091E3C8 /* GameEvents.swift */,
-				F6F8919828CEF6DF008621D5 /* RandDomiceRoller.swift.swift */,
-				F6D22A1928C4FCDE0091E3C8 /* GameService.swift */,
-				F6AC5FF728CDC86300A35B53 /* OfflineGameServiceImple.swift */,
+				F620D19528F12B0400682D90 /* Events */,
+				F620D19628F12B0C00682D90 /* Service */,
+				F620D19728F12B1000682D90 /* BoardCaster */,
+				F620D19828F12B4200682D90 /* Support */,
 			);
 			path = Game;
 			sourceTree = "<group>";
@@ -164,7 +201,7 @@
 		F6D22A0228C4F5B90091E3C8 /* DomainTests */ = {
 			isa = PBXGroup;
 			children = (
-				F690087628C7A91800D6CDC7 /* Services */,
+				F690087628C7A91800D6CDC7 /* Game */,
 			);
 			path = DomainTests;
 			sourceTree = "<group>";
@@ -179,7 +216,6 @@
 				F6D22A1328C4F7F70091E3C8 /* GameTurn.swift */,
 				F6F8919428CEF5CA008621D5 /* GameInfo.swift */,
 				F6750D4728D0D5A30034D839 /* Battle.swift */,
-				F690BC8B28CF1590003EAEF2 /* BattleGround.swift */,
 			);
 			path = "Entities+dto";
 			sourceTree = "<group>";
@@ -188,7 +224,6 @@
 			isa = PBXGroup;
 			children = (
 				F6AC5FF928CDC8F200A35B53 /* Game */,
-				F690086728C667FD00D6CDC7 /* KnightPathSuggestService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -319,6 +354,7 @@
 				F690BC8C28CF1590003EAEF2 /* BattleGround.swift in Sources */,
 				F6D22A1A28C4FCDE0091E3C8 /* GameService.swift in Sources */,
 				F6D22A1828C4FA800091E3C8 /* BinaryDice.swift in Sources */,
+				F620D19428F12A1B00682D90 /* GameEventBoardCaster.swift in Sources */,
 				F690086828C667FD00D6CDC7 /* KnightPathSuggestService.swift in Sources */,
 				F6D22A1028C4F5DF0091E3C8 /* Player.swift in Sources */,
 			);
