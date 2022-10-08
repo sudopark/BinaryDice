@@ -6,3 +6,17 @@
 //
 
 import Foundation
+import Combine
+
+
+public enum GameEventAfter {
+    case ack(_ ackEventId: String, waitTimeout: TimeInterval)
+}
+
+public protocol GameEventBroadCaster: AnyObject, Sendable {
+    
+    func sendAck(_ ackEvent: GameAckEvent)
+    func sendEvent(_ event: GameEvent, after: GameEventAfter?)
+    
+    var gameEvents: AnyPublisher<GameEvent, Never> { get }
+}
