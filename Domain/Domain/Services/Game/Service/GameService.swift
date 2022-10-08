@@ -12,6 +12,8 @@ import Combine
 public protocol GameService: Sendable {
  
     func enterGame(_ player: Player)
+    
+    func ack(_ eventId: String, from playerId: String)
  
     func rollDice(_ playerId: String) async throws
     
