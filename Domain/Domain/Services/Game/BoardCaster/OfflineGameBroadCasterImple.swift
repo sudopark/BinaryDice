@@ -21,6 +21,7 @@ public final class OfflineGameBroadCasterImple: GameEventBroadCaster, @unchecked
     }
 
     private struct Subject {
+        let sentEventIds = CurrentValueSubject<Set<String>, Never>([])
         let gameEvents = PassthroughSubject<GameEvent, Never>()
         let receivedAcks = CurrentValueSubject<[String: Set<PlayerId>], Never>([:])
     }
@@ -54,10 +55,17 @@ extension OfflineGameBroadCasterImple {
         
         let timeoutInt = Int(waitTimeout * 1000)
         
-        let allAcksOrTimeout = self.allAckReceived(ackEventId)
-            .timeout(.milliseconds(timeoutInt), scheduler: DispatchQueue.main)
+        let waitPreviousMessageSent = self.subject.sentEventIds
+            .first(where: { $0.contains(ackEventId) })
+
+        let previousMessageSentAndAllAck = waitPreviousMessageSent
+            .flatMap { [weak self] _ -> AnyPublisher<Void, Never> in
+                guard let self = self else { return Empty().eraseToAnyPublisher() }
+                return self.allAckReceived(ackEventId)
+            }
         
-        allAcksOrTimeout
+        previousMessageSentAndAllAck
+            .timeout(.milliseconds(timeoutInt), scheduler: DispatchQueue.main)
             .sink { [weak self] completed in
                 guard case .finished = completed else { return }
                 self?.sendEvent(event)
@@ -80,6 +88,9 @@ extension OfflineGameBroadCasterImple {
     private func sendEvent(_ event: GameEvent) {
         
         self.subject.gameEvents.send(event)
+        
+        let newSent = self.subject.sentEventIds.value <> [event.uuid]
+        self.subject.sentEventIds.send(newSent)
     }
 }
 

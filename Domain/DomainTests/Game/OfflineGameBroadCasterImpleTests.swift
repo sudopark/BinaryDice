@@ -64,48 +64,52 @@ extension OfflineGameBroadCasterImpleTests {
         // given
         let expect = expectation(description: "ack 다 받은 이후에 이벤트 발송")
         let broadCaster = self.makeBroadCaster()
-        let sendEvent = DummyEvent()
+        let (event1, event2) = (DummyEvent(), DummyEvent())
         
         // when
-        let sentEvent = self.waitFirstPublishedValue(expect, broadCaster.gameEvents.filter { $0.uuid == sendEvent.uuid }) {
+        let event2Sent = self.waitFirstPublishedValue(expect, broadCaster.gameEvents.filter { $0.uuid == event2.uuid }) {
             
-            broadCaster.sendEvent(sendEvent, after: .ack(sendEvent.uuid, waitTimeout: self.timeout * 2))
+            broadCaster.sendEvent(event1)
+            broadCaster.sendEvent(event2, after: .ack(event1.uuid, waitTimeout: self.timeout * 2))
             
-            let ack1 = self.ackEvent(sendEvent.uuid, for: self.players[0].userId)
+            let ack1 = self.ackEvent(event1.uuid, for: self.players[0].userId)
             broadCaster.sendAck(ack1)
             
-            let ack2 = self.ackEvent(sendEvent.uuid, for: self.players[1].userId)
+            let ack2 = self.ackEvent(event1.uuid, for: self.players[1].userId)
             broadCaster.sendAck(ack2)
         }
         
         // then
-        XCTAssertNotNil(sentEvent)
+        XCTAssertNotNil(event2Sent)
     }
     
     // 지정된 ack 다 받을때까지 기다렸다가 이벤트 전송
-    func testBroadCaster_sendEventAfterAllAckReceived_onlyTargetAckReceived() {
+    func testBroadCaster_sendEventAfterWaitingEventSentAndAllAckReceived() {
         // given
-        let expect = expectation(description: "지정된 ack 다 받은 이후에 이벤트 발송")
+        let expect = expectation(description: "앞선 이벤트 전송되고 지정된 ack 다 받은 이후에 이벤트 발송")
         let broadCaster = self.makeBroadCaster()
-        let sendEvent = DummyEvent()
-        
+        let (event1, event2, event3) = (DummyEvent(), DummyEvent(), DummyEvent())
+
         // when
-        let sentEvent = self.waitFirstPublishedValue(expect, broadCaster.gameEvents.filter { $0.uuid == sendEvent.uuid }) {
+        let event3Sent = self.waitFirstPublishedValue(expect, broadCaster.gameEvents.filter { $0.uuid == event3.uuid }) {
+
+            broadCaster.sendEvent(event1)
+            broadCaster.sendEvent(event2, after: .ack(event1.uuid, waitTimeout: self.timeout * 2))
+            broadCaster.sendEvent(event3, after: .ack(event2.uuid, waitTimeout: self.timeout * 2))
+
+            let event1Acks = self.players.map { GameAckEvent(eventId: event1.uuid, playerId: $0.userId) }
+            event1Acks.forEach {
+                broadCaster.sendAck($0)
+            }
             
-            broadCaster.sendEvent(sendEvent, after: .ack(sendEvent.uuid, waitTimeout: self.timeout * 2))
-            
-            let ack1 = self.ackEvent(sendEvent.uuid, for: self.players[0].userId)
-            broadCaster.sendAck(ack1)
-            
-            let wrongAck2 = self.ackEvent("wrong", for: self.players[1].userId)
-            broadCaster.sendAck(wrongAck2)
-            
-            let ack2 = self.ackEvent(sendEvent.uuid, for: self.players[1].userId)
-            broadCaster.sendAck(ack2)
+            let event2Acks = self.players.map { GameAckEvent(eventId: event2.uuid, playerId: $0.userId) }
+            event2Acks.forEach {
+                broadCaster.sendAck($0)
+            }
         }
-        
+
         // then
-        XCTAssertNotNil(sentEvent)
+        XCTAssertNotNil(event3Sent)
     }
     
     // 지정된 ack 다 안들어와도 timout 이후에 이벤트 전송

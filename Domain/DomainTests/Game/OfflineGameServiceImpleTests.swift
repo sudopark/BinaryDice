@@ -33,7 +33,6 @@ class OfflineGameServiceImpleTests: BaseTestCase, PublishedValueWaitAndTestable 
     
     private var mockDiceRoller: MockDiceRoller!
     private var service: OfflineGameServiceImple!
-    private var broadCaster: AutoAckGameEventBroadCaster!
     public var cancellables: Set<AnyCancellable>!
     
     override func setUpWithError() throws {
@@ -46,13 +45,13 @@ class OfflineGameServiceImpleTests: BaseTestCase, PublishedValueWaitAndTestable 
             knights: [self.player1.userId: self.player1Knights, self.player2.userId: self.player2Knights]
         )
         self.mockDiceRoller = .init()
-        self.broadCaster = AutoAckGameEventBroadCaster(players: gameInfo.players)
+        let broadcaster = AutoAckGameEventBroadCaster(players: gameInfo.players)
         self.service = .init(
             gameInfo,
             diceRoller: mockDiceRoller,
-            gameEventBroadCaster: self.broadCaster
+            gameEventBroadCaster: broadcaster
         )
-        self.broadCaster.gameServie = self.service
+        broadcaster.gameServie = self.service
     }
     
     override func tearDownWithError() throws {
@@ -61,7 +60,6 @@ class OfflineGameServiceImpleTests: BaseTestCase, PublishedValueWaitAndTestable 
         self.player1Knights = nil
         self.player2Knights = nil
         self.mockDiceRoller = nil
-        self.broadCaster = nil
         self.service = nil
     }
 }
@@ -430,7 +428,7 @@ extension OfflineGameServiceImpleTests {
             .init(.gul, [.CTR, .DL1, .DL2, .INT]),
             .init(.yut, [.INT, .DR2, .DR3, .CBR, .out])
         ]
-        
+
         // when
         let (skipDiceAndTurnUpdateCount, skipKnightMoveAndUpdateCount) = (3*2, 2)
         let totalSkipCount = skipDiceAndTurnUpdateCount + skipKnightMoveAndUpdateCount
@@ -442,14 +440,14 @@ extension OfflineGameServiceImpleTests {
                 try await self.service.rollDice(self.player1.userId)
                 self.mockDiceRoller.mocking = .gul
                 try await self.service.rollDice(self.player1.userId)
-                
+
                 try await self.service.moveKnight(
                     self.player1.userId,
                     self.player1Knights.enumerated().filter { $0.offset < 3}.map { $0.element.id },
                     through: .init(serialPaths: paths))
             }
         }
-        
+
         // then
         let gameEndEvent = events.first as? GameEndEvent
         XCTAssertEqual(events.count, 1)
