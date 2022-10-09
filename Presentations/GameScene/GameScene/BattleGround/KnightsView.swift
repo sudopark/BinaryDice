@@ -42,6 +42,7 @@ extension KnightsView {
     func drawKnights(_ knights: Knights, at nodeView: NodeView) {
         self.knights = knights
         self.internalImageView.clear()
+        self.frame = nodeView.frame
         switch knights.count {
         case 1: self.addSingleKnightLayer(knights[0], at: nodeView)
         case 2: self.addDoubleKnightsLayers(knights, at: nodeView)
@@ -55,7 +56,7 @@ extension KnightsView {
         _ knight: Knight,
         at nodeView: NodeView
     ) {
-        let center = nodeView.center
+        let center = nodeView.selfCenter()
         let circle = self.makeKnightLayerCircle(knight, at: center, with: nodeView.knightCircleRadius)
         self.internalImageView.drawLayers([circle])
     }
@@ -65,7 +66,7 @@ extension KnightsView {
         at nodeView: NodeView
     ) {
         let radius = nodeView.knightCircleRadius
-        let nodeCenter = nodeView.center
+        let nodeCenter = nodeView.selfCenter()
         let circleCenters: [CGPoint] = [
             nodeCenter.moved(dx: -radius), nodeCenter.moved(dx: radius)
         ]
@@ -79,7 +80,7 @@ extension KnightsView {
         _ knights: [Knight],
         at nodeView: NodeView
     ) {
-        let (nodeCenter, radius) = (nodeView.center, nodeView.knightCircleRadius)
+        let (nodeCenter, radius) = (nodeView.selfCenter(), nodeView.knightCircleRadius)
         let (sin60, cos60) = (sin(1/3 * CGFloat.pi), cos(1/3 * CGFloat.pi))
         let joinCircleRadius = (1-sin60) * radius / sin60
         let (dx, dy) = (sin60 * (radius + joinCircleRadius), cos60 * (radius + joinCircleRadius))
@@ -100,7 +101,7 @@ extension KnightsView {
     ) {
         let defender = knights.first(where: { $0.isDefence }) ?? knights[0]
         let attackers = knights.filter { $0.id != defender.id }
-        let (nodeCenter, radius) = (nodeView.center, nodeView.knightCircleRadius)
+        let (nodeCenter, radius) = (nodeView.selfCenter(), nodeView.knightCircleRadius)
         let defenderCircle = self.makeKnightLayerCircle(defender, at: nodeCenter, with: radius)
         
         let (dx, dy) = (sin(1/3 * CGFloat.pi) * radius * 2, cos(1/3 * CGFloat.pi * radius * 2))
@@ -143,6 +144,7 @@ extension KnightsView {
     func drawKnightsAtUpperSide(_ knights: Knights, at nodeView: NodeView) {
         self.knights = knights
         self.internalImageView.clear()
+        self.frame = nodeView.frame
         switch knights.count {
         case 1: self.drawKnightAtUpperSide(knights[0], at: nodeView)
         case 2: self.drawDoubleKnightsAtUpperSide(knights, at: nodeView)
@@ -153,8 +155,8 @@ extension KnightsView {
     }
     
     private func drawKnightAtUpperSide(_ knight: Knight, at nodeView: NodeView) {
-        let (radius, nodeRadius) = (nodeView.knightCircleRadius, nodeView.frame.width)
-        let center = nodeView.center.moved(
+        let (radius, nodeRadius) = (nodeView.knightCircleRadius, nodeView.frame.width/2)
+        let center = nodeView.selfCenter().moved(
             dx: nodeRadius * cos(CGFloat.pi * 45/180),
             dy: -nodeRadius * sin(CGFloat.pi * 45/180)
         )
@@ -166,7 +168,7 @@ extension KnightsView {
         _ knights: Knights,
         at nodeView: NodeView
     ) {
-        let (radius, nodeCenter, nodeRadius) = (nodeView.knightCircleRadius, nodeView.center, nodeView.frame.width)
+        let (radius, nodeCenter, nodeRadius) = (nodeView.knightCircleRadius, nodeView.selfCenter(), nodeView.frame.width/2)
         let (c45, s45) = (cos(CGFloat.pi * 45/180), sin(CGFloat.pi * 45/180))
         let refPoint = nodeCenter.moved(dx: nodeRadius * c45, dy: -nodeRadius * s45 )
         let centers: [CGPoint] = [
@@ -183,7 +185,7 @@ extension KnightsView {
         _ knights: Knights,
         at nodeView: NodeView
     ) {
-        let (radius, nodeCenter, nodeRadius) = (nodeView.knightCircleRadius, nodeView.center, nodeView.frame.width)
+        let (radius, nodeCenter, nodeRadius) = (nodeView.knightCircleRadius, nodeView.selfCenter(), nodeView.frame.width/2)
         let refPoint = nodeCenter.moved(
             dx: nodeRadius * cos(CGFloat.pi * 45/180),
             dy: -nodeRadius * sin(CGFloat.pi * 45/180)
@@ -203,7 +205,7 @@ extension KnightsView {
         _ knights: Knights,
         at nodeView: NodeView
     ) {
-        let (radius, nodeCenter, nodeRadius) = (nodeView.knightCircleRadius, nodeView.center, nodeView.frame.width)
+        let (radius, nodeCenter, nodeRadius) = (nodeView.knightCircleRadius, nodeView.selfCenter(), nodeView.frame.width/2)
         let refPoint = nodeCenter.moved(
             dx: nodeRadius * cos(CGFloat.pi * 45/180),
             dy: -nodeRadius * sin(CGFloat.pi * 45/180)
@@ -229,6 +231,7 @@ extension KnightsView {
     func drawKnightsAtLowerSide(_ knights: Knights, at nodeView: NodeView) {
         self.knights = knights
         self.internalImageView.clear()
+        self.frame = nodeView.frame
         switch knights.count {
         case 1: self.drawKnightAtLowerSide(knights[0], at: nodeView)
         case 2: self.drawDoubleKnightsAtLowerSide(knights, at: nodeView)
@@ -239,7 +242,7 @@ extension KnightsView {
     }
     
     private func drawKnightAtLowerSide(_ knight: Knight, at nodeView: NodeView) {
-        let (radius, nodeRadius) = (nodeView.knightCircleRadius, nodeView.frame.width)
+        let (radius, nodeRadius) = (nodeView.knightCircleRadius, nodeView.frame.width/2)
         let center = nodeView.center.moved(
             dx: -nodeRadius * cos(CGFloat.pi * 45/180),
             dy: nodeRadius * sin(CGFloat.pi * 45/180)
@@ -249,7 +252,7 @@ extension KnightsView {
     }
     
     private func drawDoubleKnightsAtLowerSide(_ knights: Knights, at nodeView: NodeView) {
-        let (radius, nodeCenter, nodeRadius) = (nodeView.knightCircleRadius, nodeView.center, nodeView.frame.width)
+        let (radius, nodeCenter, nodeRadius) = (nodeView.knightCircleRadius, nodeView.selfCenter(), nodeView.frame.width/2)
         let (c45, s45) = (cos(CGFloat.pi * 45/180), sin(CGFloat.pi * 45/180))
         let refPoint = nodeCenter.moved(
             dx: -nodeRadius * cos(CGFloat.pi * 45/180),
@@ -266,7 +269,7 @@ extension KnightsView {
     }
     
     private func  drawTrippleKnightsAtLowerSide(_ knights: Knights, at nodeView: NodeView) {
-        let (radius, nodeCenter, nodeRadius) = (nodeView.knightCircleRadius, nodeView.center, nodeView.frame.width)
+        let (radius, nodeCenter, nodeRadius) = (nodeView.knightCircleRadius, nodeView.selfCenter(), nodeView.frame.width/2)
         let refPoint = nodeCenter.moved(
             dx: -nodeRadius * cos(CGFloat.pi * 45/180),
             dy: nodeRadius * sin(CGFloat.pi * 45/180)
@@ -286,7 +289,7 @@ extension KnightsView {
         _ knights: Knights,
         at nodeView: NodeView
     ) {
-        let (radius, nodeCenter, nodeRadius) = (nodeView.knightCircleRadius, nodeView.center, nodeView.frame.width)
+        let (radius, nodeCenter, nodeRadius) = (nodeView.knightCircleRadius, nodeView.selfCenter(), nodeView.frame.width/2)
         let refPoint = nodeCenter.moved(
             dx: -nodeRadius * cos(CGFloat.pi * 45/180),
             dy: nodeRadius * sin(CGFloat.pi * 45/180)
@@ -331,9 +334,17 @@ private extension Knight {
 }
 
 
-private extension NodeView {
+extension NodeView {
     
-    var knightCircleRadius: CGFloat {
-        return self.frame.width / 2 * 0.4
+    func selfCenter() -> CGPoint {
+        return CGPoint.zero.moved(dx: self.frame.width/2, dy: self.frame.height/2)
+    }
+    
+    fileprivate var knightCircleRadius: CGFloat {
+        return NodeView.knightCircleRadius(self.frame.size)
+    }
+    
+    static func knightCircleRadius(_ size: CGSize) -> CGFloat {
+        return size.width / 2 * 0.4
     }
 }
