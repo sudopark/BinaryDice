@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F606F4A028F297160074C7E3 /* CG+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F606F49F28F297160074C7E3 /* CG+Extensions.swift */; };
+		F606F4A328F2A0EC0074C7E3 /* CanvasImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F606F4A228F2A0EC0074C7E3 /* CanvasImageView.swift */; };
 		F62295B928DB618300577BE0 /* BaseUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F62295B828DB618300577BE0 /* BaseUIView.swift */; };
 		F62295BC28DB61FD00577BE0 /* AutoLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = F62295BB28DB61FD00577BE0 /* AutoLayout.swift */; };
 		F62295BE28DB630F00577BE0 /* BaseUIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F62295BD28DB630F00577BE0 /* BaseUIViewController.swift */; };
@@ -31,6 +33,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		F606F49F28F297160074C7E3 /* CG+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CG+Extensions.swift"; sourceTree = "<group>"; };
+		F606F4A228F2A0EC0074C7E3 /* CanvasImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CanvasImageView.swift; sourceTree = "<group>"; };
 		F62295B828DB618300577BE0 /* BaseUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseUIView.swift; sourceTree = "<group>"; };
 		F62295BB28DB61FD00577BE0 /* AutoLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoLayout.swift; sourceTree = "<group>"; };
 		F62295BD28DB630F00577BE0 /* BaseUIViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseUIViewController.swift; sourceTree = "<group>"; };
@@ -69,6 +73,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		F606F4A128F2A0DF0074C7E3 /* CustomViews */ = {
+			isa = PBXGroup;
+			children = (
+				F606F4A228F2A0EC0074C7E3 /* CanvasImageView.swift */,
+			);
+			path = CustomViews;
+			sourceTree = "<group>";
+		};
 		F62295B728DB617800577BE0 /* BaseComponents */ = {
 			isa = PBXGroup;
 			children = (
@@ -82,6 +94,7 @@
 			isa = PBXGroup;
 			children = (
 				F62295BB28DB61FD00577BE0 /* AutoLayout.swift */,
+				F606F49F28F297160074C7E3 /* CG+Extensions.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -109,6 +122,7 @@
 			isa = PBXGroup;
 			children = (
 				F62295B728DB617800577BE0 /* BaseComponents */,
+				F606F4A128F2A0DF0074C7E3 /* CustomViews */,
 				F62295BA28DB61F000577BE0 /* Utils */,
 				F6C5FBC228DB5FBB0021BE42 /* CommonPresentations.h */,
 			);
@@ -247,7 +261,9 @@
 			files = (
 				F62295BE28DB630F00577BE0 /* BaseUIViewController.swift in Sources */,
 				F62295BC28DB61FD00577BE0 /* AutoLayout.swift in Sources */,
+				F606F4A028F297160074C7E3 /* CG+Extensions.swift in Sources */,
 				F62295B928DB618300577BE0 /* BaseUIView.swift in Sources */,
+				F606F4A328F2A0EC0074C7E3 /* CanvasImageView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
