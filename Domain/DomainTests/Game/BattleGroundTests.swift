@@ -71,7 +71,7 @@ extension BattleGroundTests {
         
         // then
         XCTAssertEqual(result?.battles.isEmpty, true)
-        XCTAssertEqual(result?.moves, [.init(knights: [knight], path: path)])
+        XCTAssertEqual(result?.moves, [.init(knights: [knight], path: path.serialPaths.first!)])
         XCTAssertEqual(result?.finalPosition, .init([knight], at: .R2) |> \.comesFrom .~ [.R1])
         let movedPosition = self.ground.knightPositions.filter { $0.current != .start }
         let positionR2 = movedPosition.filter { $0.current == .R2 }
@@ -92,8 +92,8 @@ extension BattleGroundTests {
         // then
         XCTAssertEqual(result?.battles.isEmpty, true)
         XCTAssertEqual(result?.moves, [
-            .init(knights: [knight], path: .init(serialPaths: [path1])),
-            .init(knights: [knight], path: .init(serialPaths: [path2]))
+            .init(knights: [knight], path: path1),
+            .init(knights: [knight], path: path2)
         ])
         XCTAssertEqual(result?.finalPosition, .init([knight], at: .R4) |> \.comesFrom .~ [.R3])
         let movedPosition = self.ground.knightPositions.filter { $0.current != .start }
@@ -117,7 +117,7 @@ extension BattleGroundTests {
         
         // then
         XCTAssertEqual(result?.battles.isEmpty, true)
-        XCTAssertEqual(result?.moves, [ .init(knights: [kn1_2], path: path) ])
+        XCTAssertEqual(result?.moves, [ .init(knights: [kn1_2], path: path.serialPaths.first!, mergedWith: [kn1_1]) ])
         XCTAssertEqual(result?.finalPosition.knight.map { $0.id }.sorted(), [kn1_1.id, kn1_2.id].sorted())
         XCTAssertEqual(result?.finalPosition.comesFrom, [.R1])
         
@@ -150,10 +150,11 @@ extension BattleGroundTests {
         XCTAssertEqual(result?.battles.isEmpty, true)
         
         XCTAssertEqual(result?.moves.count, 2)
-        XCTAssertEqual(result?.moves.first?.knights.map { $0.id }.sorted(), [kn1_2.id])
-        XCTAssertEqual(result?.moves.first?.path, path1)
-        XCTAssertEqual(result?.moves.last?.knights.map { $0.id }.sorted(), [kn1_1.id, kn1_2.id].sorted())
-        XCTAssertEqual(result?.moves.last?.path, path2)
+        XCTAssertEqual(result?.moves.first?.knights.ids, [kn1_2.id])
+        XCTAssertEqual(result?.moves.first?.path, path1.serialPaths.first!)
+        XCTAssertEqual(result?.moves.first?.mergedWith.ids, [kn1_1.id])
+        XCTAssertEqual(result?.moves.last?.knights.ids, [kn1_1.id, kn1_2.id].sorted())
+        XCTAssertEqual(result?.moves.last?.path, path2.serialPaths.first!)
         
         XCTAssertEqual(result?.finalPosition.current, .R2)
         XCTAssertEqual(result?.finalPosition.knight.map { $0.id }.sorted() , [kn1_1.id, kn1_2.id].sorted())
@@ -188,10 +189,11 @@ extension BattleGroundTests {
         XCTAssertEqual(result?.battles.isEmpty, true)
         
         XCTAssertEqual(result?.moves.count, 2)
-        XCTAssertEqual(result?.moves.first?.knights.map { $0.id }.sorted(), [kn1_a.id])
-        XCTAssertEqual(result?.moves.first?.path, path1)
-        XCTAssertEqual(result?.moves.last?.knights.map { $0.id }.sorted(), [kn1_d.id, kn1_a.id].sorted())
-        XCTAssertEqual(result?.moves.last?.path, path2)
+        XCTAssertEqual(result?.moves.first?.knights.ids, [kn1_a.id])
+        XCTAssertEqual(result?.moves.first?.mergedWith.ids, [kn1_d.id].sorted())
+        XCTAssertEqual(result?.moves.first?.path, path1.serialPaths.first!)
+        XCTAssertEqual(result?.moves.last?.knights.ids, [kn1_d.id, kn1_a.id].sorted())
+        XCTAssertEqual(result?.moves.last?.path, path2.serialPaths.first!)
         
         XCTAssertEqual(result?.finalPosition.current, .R2)
         XCTAssertEqual(result?.finalPosition.knight.map { $0.id }.sorted() , [kn1_d.id, kn1_a.id].sorted())

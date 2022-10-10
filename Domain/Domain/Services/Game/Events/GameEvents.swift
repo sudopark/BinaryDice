@@ -39,7 +39,7 @@ public struct RollDiceEvent: GameEvent {
 public struct NodeOccupationUpdateEvent: GameEvent {
     
     public let uuid: String = UUID().uuidString
-    public let movemensts: [KnightMovement]
+    public let movemensts: [KnightsSingleMovement]
     public let battles: [Battle]
     public let knightPositions: [KnightPosition]
 }

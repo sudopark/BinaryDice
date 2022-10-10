@@ -28,6 +28,12 @@ public struct Knight: Equatable, Sendable {
 
 public typealias Knights = [Knight]
 
+extension Knights {
+    var ids: [String] {
+        return self.map { $0.id }.sorted()
+    }
+}
+
 public struct KnightPosition: Equatable, Sendable {
     
     public let knight: Knights
@@ -57,8 +63,15 @@ public struct KnightPosition: Equatable, Sendable {
 }
 
 
-public struct KnightMovement: Equatable, Sendable {
+public struct KnightsSingleMovement: Equatable, Sendable {
     
     public let knights: Knights
-    public let path: KnightMovePath
+    public let path: KnightMovePath.PathPerDice
+    public let mergedWith: Knights
+    
+    init(knights: Knights, path: KnightMovePath.PathPerDice, mergedWith: Knights = []) {
+        self.knights = knights
+        self.path = path
+        self.mergedWith = mergedWith
+    }
 }

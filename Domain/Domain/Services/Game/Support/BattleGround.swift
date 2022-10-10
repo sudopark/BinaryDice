@@ -14,7 +14,7 @@ struct BattleGround {
     
     var knightPositions: [KnightPosition] = []
     
-    typealias MoveResult = (moves: [KnightMovement], battles: [Battle], finalPosition: KnightPosition)
+    typealias MoveResult = (moves: [KnightsSingleMovement], battles: [Battle], finalPosition: KnightPosition)
     
     init(gameInfo: GameInfo) {
         self.knightPositions = gameInfo.knights.values
@@ -61,7 +61,7 @@ extension BattleGround {
         positions: [KnightPosition],
         from: KnightPosition,
         through path: KnightMovePath.PathPerDice
-    ) -> (KnightMovement, Battle?, KnightPosition)? {
+    ) -> (KnightsSingleMovement, Battle?, KnightPosition)? {
         guard let dest = path.nodes.last,
               let playerId = from.knight.first?.playerId,
               let movedPosition = KnightPosition(knights: from.knight, from: path)
@@ -71,7 +71,7 @@ extension BattleGround {
             knightPositionsAtDest.filter { $0.knight.first?.playerId == playerId },
             knightPositionsAtDest.filter { $0.knight.first?.playerId != playerId }
         )
-        let move = KnightMovement(knights: from.knight, path: .init(serialPaths: [path]))
+        let move = KnightsSingleMovement(knights: from.knight, path: path, mergedWith: alliance.flatMap { $0.knight })
         let newPosition = alliance.mergeAll(movedPosition)
         let battle = enemy.isEmpty == false
             ? self.battle(at: dest, from.knight, enemy.flatMap { $0.knight }) : nil
